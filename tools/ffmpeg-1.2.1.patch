@@ -1,0 +1,18 @@
+--- ffmpeg-1.2.1/configure	2013-05-23 17:29:33.000000000 +0800
++++ ffmpeg-1.2.1/configure.new	2013-05-23 17:52:36.000000000 +0800
+@@ -2447,6 +2447,7 @@
+     warn "$pkg_config not found, library detection may fail."
+     pkg_config=false
+ fi
++pkg_config=false
+ 
+ exesuf() {
+     case $1 in
+@@ -3972,6 +3973,7 @@
+ fi
+ 
+ SDL_CONFIG="${cross_prefix}sdl-config"
++SDL_CONFIG=false
+ if check_pkg_config sdl SDL_events.h SDL_PollEvent; then
+     check_cpp_condition SDL.h "(SDL_MAJOR_VERSION<<16 | SDL_MINOR_VERSION<<8 | SDL_PATCHLEVEL) >= 0x010201" $sdl_cflags &&
+     enable sdl &&
