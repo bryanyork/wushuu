@@ -1,13 +1,9 @@
 #!/bin/bash -v
 
-OLD_DIR=$(pwd)
-FR_PREFIX=${OLD_DIR}/../3rdparty
+FR_PREFIX=$(pwd)/../3rdparty
 YASM_VERSION=1.2.0
 
-SRC_DIR=${OLD_DIR}/src
-BUILD_DIR=${OLD_DIR}/build
-
-mkdir -p ${SRC_DIR} && cd ${SRC_DIR}
+mkdir -p src && cd src
 
 if [ ! -d yasm-${YASM_VERSION} ]
 then
@@ -18,10 +14,10 @@ then
   tar xf yasm-${YASM_VERSION}.tar.gz
 fi
 
-rm -rf ../build/yasm && mkdir -p build/yasm && cd build/yasm
+rm -rf ../build/yasm && mkdir -p ../build/yasm && cd ../build/yasm
 
 env -i PATH=${FR_PREFIX}/bin:/usr/bin:/bin \
-            ${OLD_DIR}/yasm-${YASM_VERSION}/configure \
+            ../../src/yasm-${YASM_VERSION}/configure \
                 --prefix=${FR_PREFIX} \
                 --disable-python \
                 --disable-python-binding \
@@ -29,4 +25,4 @@ env -i PATH=${FR_PREFIX}/bin:/usr/bin:/bin \
 
 make && make install
 
-cd ${OLD_DIR}
+cd ../..

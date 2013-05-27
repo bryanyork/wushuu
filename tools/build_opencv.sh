@@ -1,8 +1,9 @@
 #!/bin/bash -v
 
-OLD_DIR=$(pwd)
-FR_PREFIX=${OLD_DIR}/../3rdparty
+FR_PREFIX=$(pwd)/../3rdparty
 OPENCV_VERSION=2.4.5
+
+mkdir -p src && cd src
 
 if [ ! -d opencv-${OPENCV_VERSION} ]
 then
@@ -13,7 +14,7 @@ then
   tar xf opencv-${OPENCV_VERSION}.tar.gz
 fi
 
-rm -rf build/opencv && mkdir -p build/opencv && cd build/opencv
+rm -rf ../build/opencv && mkdir -p ../build/opencv && cd ../build/opencv
 
 if [ -n "${WS_BUILD_SHARED}" ]
 then
@@ -38,7 +39,7 @@ then
                   -D BUILD_opencv_world=ON \
                   -D BUILD_EXAMPLES=OFF \
                   -D BUILD_opencv_apps=OFF \
-                  ${OLD_DIR}/opencv-${OPENCV_VERSION}
+                  ../../src/opencv-${OPENCV_VERSION}
 else
   env -i PATH=${FR_PREFIX}/bin:/usr/local/bin:/usr/bin:/bin \
             CC=/usr/bin/gcc44 \
@@ -60,9 +61,9 @@ else
                   -D BUILD_opencv_world=ON \
                   -D BUILD_EXAMPLES=OFF \
                   -D BUILD_opencv_apps=OFF \
-                  ${OLD_DIR}/opencv-${OPENCV_VERSION}
+                  ../../src/opencv-${OPENCV_VERSION}
 fi
 
 LD_RUN_PATH=\$ORIGIN make -j8 && make install
 
-cd ${OLD_DIR}
+cd ../..

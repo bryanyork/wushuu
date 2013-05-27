@@ -1,7 +1,6 @@
 #!/bin/bash -v
 
-OLD_DIR=$(pwd)
-FR_PREFIX=${OLD_DIR}/../3rdparty
+FR_PREFIX=$(pwd)/../3rdparty
 PC_VERSION=0.28
 
 mkdir -p src && cd src
@@ -18,10 +17,10 @@ fi
 rm -rf ../build/pkg-config && mkdir -p ../build/pkg-config && cd ../build/pkg-config
 
 env -i PATH=${FR_PREFIX}/bin:/usr/bin:/bin \
-            ${OLD_DIR}/pkg-config-${PC_VERSION}/configure \
+            ../../src/pkg-config-${PC_VERSION}/configure \
                 --prefix=${FR_PREFIX} \
                 --with-internal-glib
 
 make && make install
 
-cd ${OLD_DIR}
+cd ../..

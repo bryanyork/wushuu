@@ -1,8 +1,9 @@
 #!/bin/bash -v
 
-OLD_DIR=$(pwd)
-FR_PREFIX=${OLD_DIR}/../3rdparty
+FR_PREFIX=$(pwd)/../3rdparty
 FFMPEG_VERSION=1.2.1
+
+mkdir -p src && cd src
 
 if [ ! -d ffmpeg-${FFMPEG_VERSION} ]
 then
@@ -17,12 +18,12 @@ then
   fi
 fi
 
-rm -rf build/ffmpeg && mkdir -p build/ffmpeg && cd build/ffmpeg
+rm -rf ../build/ffmpeg && mkdir -p ../build/ffmpeg && cd ../build/ffmpeg
 
 if [ -n "${WS_BUILD_SHARED}" ]
 then
   env -i PATH=${FR_PREFIX}/bin:/usr/bin:/bin \
-            ${OLD_DIR}/ffmpeg-${FFMPEG_VERSION}/configure \
+            ../../src/ffmpeg-${FFMPEG_VERSION}/configure \
                 --prefix=${FR_PREFIX} \
                 --enable-gpl \
                 --enable-nonfree \
@@ -36,7 +37,7 @@ then
                 --enable-pic
 else
   env -i PATH=${FR_PREFIX}/bin:/usr/bin:/bin \
-            ${OLD_DIR}/ffmpeg-${FFMPEG_VERSION}/configure \
+            ../../src/ffmpeg-${FFMPEG_VERSION}/configure \
                 --prefix=${FR_PREFIX} \
                 --enable-gpl \
                 --enable-nonfree \
@@ -52,4 +53,4 @@ fi
 
 LD_RUN_PATH=\$ORIGIN make -j8 && make install
 
-cd ${OLD_DIR}
+cd ../..
