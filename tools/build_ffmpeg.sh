@@ -1,7 +1,7 @@
 #!/bin/bash -v
 
-WDIR=$(pwd)
-FR_PREFIX=${WDIR}/../3rdparty
+OLD_DIR=$(pwd)
+FR_PREFIX=${OLD_DIR}/../3rdparty
 FFMPEG_VERSION=1.2.1
 
 if [ ! -d ffmpeg-${FFMPEG_VERSION} ]
@@ -11,12 +11,45 @@ then
     wget http://www.ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.bz2
   fi
   tar xf ffmpeg-${FFMPEG_VERSION}.tar.bz2
-  patch -N -d ffmpeg-${FFMPEG_VERSION} < ffmpeg-${FFMPEG_VERSION}.patch
+  if [ ! -e ${FR_PREFIX}/bin/sdl-config ]
+  then
+    ln -s /usr/bin/false ${FR_PREFIX}/bin/sdl-config
+  fi
 fi
 
 rm -rf build/ffmpeg && mkdir -p build/ffmpeg && cd build/ffmpeg
 
-${WDIR}/ffmpeg-${FFMPEG_VERSION}/configure --prefix=${FR_PREFIX} --enable-gpl --enable-nonfree --enable-version3 --disable-encoders --disable-outdevs --disable-doc --disable-static --disable-programs --enable-shared --enable-pic
-make -j8 && make install
+if [ -n "${WS_BUILD_SHARED}" ]
+then
+  env -i PATH=${FR_PREFIX}/bin:/usr/bin:/bin \
+            ${OLD_DIR}/ffmpeg-${FFMPEG_VERSION}/configure \
+                --prefix=${FR_PREFIX} \
+                --enable-gpl \
+                --enable-nonfree \
+                --enable-version3 \
+                --disable-encoders \
+                --disable-outdevs \
+                --disable-doc \
+                --disable-programs \
+                --disable-static \
+                --enable-shared \
+                --enable-pic
+else
+  env -i PATH=${FR_PREFIX}/bin:/usr/bin:/bin \
+            ${OLD_DIR}/ffmpeg-${FFMPEG_VERSION}/configure \
+                --prefix=${FR_PREFIX} \
+                --enable-gpl \
+                --enable-nonfree \
+                --enable-version3 \
+                --disable-encoders \
+                --disable-outdevs \
+                --disable-doc \
+                --disable-programs \
+                --enable-static \
+                --disable-shared \
+                --disable-pic
+fi
 
-cd ${WDIR}
+LD_RUN_PATH=\$ORIGIN make -j8 && make install
+
+cd ${OLD_DIR}
