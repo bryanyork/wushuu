@@ -23,6 +23,7 @@ then
             CXX=/usr/bin/g++44 \
             cmake -D BUILD_SHARED_LIBS=ON \
                   -D CMAKE_INSTALL_PREFIX=${FR_PREFIX} \
+                  -D CMAKE_SHARED_LINKER_FLAGS="-L${FR_PREFIX}/lib" \
                   -D CMAKE_SKIP_RPATH=ON \
                   -D BUILD_JPEG=ON \
                   -D BUILD_PNG=ON \
@@ -46,6 +47,7 @@ else
             CXX=/usr/bin/g++44 \
             cmake -D BUILD_SHARED_LIBS=OFF \
                   -D CMAKE_INSTALL_PREFIX=${FR_PREFIX} \
+                  -D CMAKE_SHARED_LINKER_FLAGS=${FR_PREFIX}/lib \
                   -D BUILD_JPEG=ON \
                   -D BUILD_PNG=ON \
                   -D BUILD_TIFF=ON \
