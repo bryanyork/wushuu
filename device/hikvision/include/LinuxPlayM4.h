@@ -6,24 +6,13 @@
 	{
 #endif
 
-//typedef unsigned int HWND;
-//typedef void * HDC;
+typedef unsigned int PLAYM4_HWND;
+typedef void * PLAYM4_HDC;
 
 #define PLAYM4_API 
 
 #define __stdcall
 
-typedef struct tagSystemTime
-{
-	short wYear;
-	short wMonth;
-	short wDayOfWeek;
-	short wDay;
-	short wHour;
-	short wMinute;
-	short wSecond;
-	short wMilliseconds;
-}SYSTEMTIME;
 
 #ifndef CALLBACK
 #define CALLBACK
@@ -54,8 +43,8 @@ typedef struct tagSystemTime
 #define	 PLAYM4_ALLOC_MEMORY_ERROR		6	//Allocate memory failed.
 #define  PLAYM4_OPEN_FILE_ERROR			7	//Open the file failed.
 #define  PLAYM4_CREATE_OBJ_ERROR		8	//Create thread or event failed
-#define  PLAYM4_CREATE_DDRAW_ERROR		9	//Create DirectDraw object failed.
-#define  PLAYM4_CREATE_OFFSCREEN_ERROR 10	//failed when creating off-screen surface.
+//#define  PLAYM4_CREATE_DDRAW_ERROR		9	//Create DirectDraw object failed.
+//#define  PLAYM4_CREATE_OFFSCREEN_ERROR 10	//failed when creating off-screen surface.
 #define  PLAYM4_BUF_OVER			   11	//buffer is overflow
 #define  PLAYM4_CREATE_SOUND_ERROR	   12	//failed when creating audio device.	
 #define	 PLAYM4_SET_VOLUME_ERROR	   13	//Set volume failed
@@ -67,8 +56,8 @@ typedef struct tagSystemTime
 #define  PLAYM4_INIT_DECODER_ERROR     19	//Initialize decoder failed.
 #define  PLAYM4_CHECK_FILE_ERROR	   20	//The file data is unknown.
 #define  PLAYM4_INIT_TIMER_ERROR	   21	//Initialize multimedia clock failed.
-#define	 PLAYM4_BLT_ERROR			   22	//Blt failed.
-#define  PLAYM4_UPDATE_ERROR		   23	//Update failed.
+#define	 PLAYM4_BLT_ERROR		       22	//Display failed.
+//#define  PLAYM4_UPDATE_ERROR		   23	//Update failed.
 #define  PLAYM4_OPEN_FILE_ERROR_MULTI  24   //openfile error, streamtype is multi
 #define  PLAYM4_OPEN_FILE_ERROR_VIDEO  25   //openfile error, streamtype is video
 #define  PLAYM4_JPEG_COMPRESS_ERROR    26   //JPEG compress error
@@ -159,6 +148,18 @@ typedef struct tagSystemTime
 #define SYNCDATA_VEH	    1 //同步数据:车载信息	
 #define SYNCDATA_IVS	    2 //同步数据:智能信息
 
+typedef struct tagSystemTime
+{
+	short wYear;
+	short wMonth;
+	short wDayOfWeek;
+	short wDay;
+	short wHour;
+	short wMinute;
+	short wSecond;
+	short wMilliseconds;
+}SYSTEMTIME;
+
 typedef struct tagHKRect
 {
 	unsigned long nLeft;	
@@ -179,11 +180,11 @@ typedef struct{
 
 //Frame Info
 typedef struct{
-	int nWidth; // audio Sample Rate
-	int nHeight; // audio Sample bits
+	int nWidth;
+	int nHeight;
 	int nStamp;
 	int nType;
-	int nFrameRate; // audio channel
+	int nFrameRate;
 	unsigned int dwFrameNum;
 }FRAME_INFO;
 
@@ -260,13 +261,13 @@ typedef struct PLAYM4_SYSTEM_TIME //绝对时间
 
 ////////////////ver 1.0///////////////////////////////////////
 //Initialize DirecDraw.Now invalid.
- int   PlayM4_InitDDraw(HWND hWnd);
+ int   PlayM4_InitDDraw(PLAYM4_HWND hWnd);
 //Release directDraw; Now invalid.
  int  PlayM4_RealeseDDraw();
 
  int  PlayM4_OpenFile(int nPort,char * sFileName);
  int  PlayM4_CloseFile(int nPort);
- int  PlayM4_Play(int nPort, HWND hWnd);
+ int  PlayM4_Play(int nPort, PLAYM4_HWND hWnd);
  int  PlayM4_Stop(int nPort);
  int  PlayM4_Pause(int nPort,unsigned int nPause);
  int  PlayM4_Fast(int nPort);
@@ -274,7 +275,7 @@ typedef struct PLAYM4_SYSTEM_TIME //绝对时间
  int  PlayM4_OneByOne(int nPort);
  int  PlayM4_SetPlayPos(int nPort,float fRelativePos);
  float  PlayM4_GetPlayPos(int nPort);
- int  PlayM4_SetFileEndMsg(int nPort,HWND hWnd,unsigned int nMsg);
+ int  PlayM4_SetFileEndMsg(int nPort,PLAYM4_HWND hWnd,unsigned int nMsg);
  int  PlayM4_SetVolume(int nPort,unsigned short nVolume);
  int  PlayM4_StopSound();
  int  PlayM4_PlaySound(int nPort);
@@ -295,6 +296,7 @@ typedef struct PLAYM4_SYSTEM_TIME //绝对时间
 
  unsigned int 	PlayM4_GetFileTotalFrames(int nPort);
  unsigned int 	PlayM4_GetCurrentFrameRate(int nPort);
+ int 	PlayM4_GetCurrentFrameRateEx(int nPort, float* pfFrameRate);
  unsigned int 	PlayM4_GetPlayedTimeEx(int nPort);
  int 	PlayM4_SetPlayedTimeEx(int nPort,unsigned int nTime);
  unsigned int 	PlayM4_GetCurrentFrameNum(int nPort);
@@ -347,7 +349,7 @@ typedef struct PLAYM4_SYSTEM_TIME //绝对时间
 
 ////////////////ver 3.0 added///////////////////////////////////////
  int  PlayM4_SetDecCBStream(int nPort,unsigned int nStream);
- int  PlayM4_SetDisplayRegion(int nPort,unsigned int nRegionNum, HKRECT *pSrcRect, HWND hDestWnd, int bEnable);
+ int  PlayM4_SetDisplayRegion(int nPort,unsigned int nRegionNum, HKRECT *pSrcRect, PLAYM4_HWND hDestWnd, int bEnable);
  int  PlayM4_RefreshPlayEx(int nPort,unsigned int nRegionNum);
 #if (WINVER >= 0x0400)
 //Note: The funtion must be builded under win2000 or above with Microsoft Platform sdk.
@@ -362,8 +364,8 @@ typedef struct PLAYM4_SYSTEM_TIME //绝对时间
  int  PlayM4_CloseStreamEx(int nPort);
  int  PlayM4_InputVideoData(int nPort,unsigned char * pBuf,unsigned int nSize);
  int  PlayM4_InputAudioData(int nPort,unsigned char * pBuf,unsigned int nSize);
- int  PlayM4_RegisterDrawFun(int nPort,void (CALLBACK* DrawFun)(int nPort,HDC hDc,int nUser),int nUser);
- int  PlayM4_RigisterDrawFun(int nPort,void (CALLBACK* DrawFun)(int nPort,HDC hDc,int nUser),int nUser);
+ int  PlayM4_RegisterDrawFun(int nPort,void (CALLBACK* DrawFun)(int nPort,PLAYM4_HDC hDc,int nUser),int nUser);
+ int  PlayM4_RigisterDrawFun(int nPort,void (CALLBACK* DrawFun)(int nPort,PLAYM4_HDC hDc,int nUser),int nUser);
 //////////////////v3.4/////////////////////////////////////////////////////
  int  PlayM4_SetTimerType(int nPort,unsigned int nTimerType,unsigned int nReserved);
  int  PlayM4_GetTimerType(int nPort,unsigned int *pTimerType,unsigned int *pReserved);
@@ -376,7 +378,7 @@ typedef struct PLAYM4_SYSTEM_TIME //绝对时间
  int  PlayM4_SetEncTypeChangeCallBack(int nPort,void(CALLBACK *funEncChange)(int nPort,int nUser),int nUser);
  int  PlayM4_SetColor(int nPort, unsigned int nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue);
  int  PlayM4_GetColor(int nPort, unsigned int nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue);
- int  PlayM4_SetEncChangeMsg(int nPort,HWND hWnd,unsigned int nMsg);
+ int  PlayM4_SetEncChangeMsg(int nPort,PLAYM4_HWND hWnd,unsigned int nMsg);
  int  PlayM4_GetOriginalFrameCallBack(int nPort, int bIsChange,int bNormalSpeed,int nStartFrameNum,int nStartStamp,int nFileHeader,void(CALLBACK *funGetOrignalFrame)(int nPort,FRAME_TYPE *frameType, int nUser),int nUser);
  int  PlayM4_GetFileSpecialAttr(int nPort, unsigned int *pTimeStamp,unsigned int *pFileNum ,unsigned int *pReserved);
  unsigned int  PlayM4_GetSpecialData(int nPort);
@@ -432,6 +434,9 @@ int PlayM4_SetSyncRef(int nPort, int nAccuracy, int nSyncFlag);
 int  PlayM4_SyncToRef(int nPort, int nSyncRefPort ,int bEnable);
  
 //参数： nSyncRefPort --- 设定为同步时间基准的port号；
+
+//add by wzhg 2012-03-21
+PLAYM4_API int __stdcall PlayM4_SetVideoWindow(int nPort, unsigned int nRegionNum, PLAYM4_HWND hWnd);
 
 
 
