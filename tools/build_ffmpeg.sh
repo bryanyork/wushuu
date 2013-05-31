@@ -34,7 +34,10 @@ then
                 --disable-programs \
                 --disable-static \
                 --enable-shared \
-                --enable-pic
+                --enable-pic \
+                --extra-cflags="${WS_COMPILE_FLAGS}" \
+                --extra-cxxflags="${WS_COMPILE_FLAGS}" \
+                --extra-ldflags="${WS_LINK_FLAGS}"
 else
   env -i PATH=${FR_PREFIX}/bin:/usr/bin:/bin \
             ../../src/ffmpeg-${FFMPEG_VERSION}/configure \
@@ -48,7 +51,10 @@ else
                 --disable-programs \
                 --enable-static \
                 --disable-shared \
-                --disable-pic
+                --disable-pic \
+                --extra-cflags="${WS_COMPILE_FLAGS}" \
+                --extra-cxxflags="${WS_COMPILE_FLAGS}" \
+                --extra-ldflags="${WS_LINK_FLAGS}"
 fi
 
 LD_RUN_PATH=\$ORIGIN make -j8 && make install

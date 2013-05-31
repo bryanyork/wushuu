@@ -19,11 +19,13 @@ rm -rf ../build/opencv && mkdir -p ../build/opencv && cd ../build/opencv
 if [ -n "${WS_BUILD_SHARED}" ]
 then
   env -i PATH=${FR_PREFIX}/bin:/usr/local/bin:/usr/bin:/bin \
-            CC=/usr/bin/gcc44 \
-            CXX=/usr/bin/g++44 \
             cmake -D BUILD_SHARED_LIBS=ON \
+                  -D CMAKE_C_COMPILER=gcc44 \
+                  -D CMAKE_C_FLAGS="${WS_COMPILE_FLAGS}" \
+                  -D CMAKE_CXX_COMPILER=g++44 \
+                  -D CMAKE_CXX_FLAGS="${WS_COMPILE_FLAGS}" \
                   -D CMAKE_INSTALL_PREFIX=${FR_PREFIX} \
-                  -D CMAKE_SHARED_LINKER_FLAGS="-L${FR_PREFIX}/lib" \
+                  -D CMAKE_SHARED_LINKER_FLAGS="-L${FR_PREFIX}/lib ${WS_LINK_FLAGS}" \
                   -D CMAKE_SKIP_RPATH=ON \
                   -D BUILD_JPEG=ON \
                   -D BUILD_PNG=ON \
@@ -46,8 +48,14 @@ else
             CC=/usr/bin/gcc44 \
             CXX=/usr/bin/g++44 \
             cmake -D BUILD_SHARED_LIBS=OFF \
+                  -D COMPILE_FLAGS="${WS_COMPILE_FLAGS}" \
+                  -D LINK_FLAGS="${WS_LINK_FLAGS}" \
+                  -D CMAKE_C_COMPILER=gcc44 \
+                  -D CMAKE_C_FLAGS="${WS_COMPILE_FLAGS}" \
+                  -D CMAKE_CXX_COMPILER=g++44 \
+                  -D CMAKE_CXX_FLAGS="${WS_COMPILE_FLAGS}" \
                   -D CMAKE_INSTALL_PREFIX=${FR_PREFIX} \
-                  -D CMAKE_SHARED_LINKER_FLAGS=${FR_PREFIX}/lib \
+                  -D CMAKE_SHARED_LINKER_FLAGS="-L${FR_PREFIX}/lib ${WS_LINK_FLAGS}" \
                   -D BUILD_JPEG=ON \
                   -D BUILD_PNG=ON \
                   -D BUILD_TIFF=ON \
