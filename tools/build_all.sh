@@ -1,14 +1,19 @@
-#!/bin/bash -v
+#!/bin/bash -ev
 
-rm -rf $(pwd)/../3rdparty && rm -rf build
+#rm -rf $(pwd)/../3rdparty && rm -rf build
 
 # have to integrate device support
 export WS_BUILD_SHARED=true
-# hikvision only have 32bit decode SDK for linux
-export WS_COMPILE_FLAGS=-m32
-export WS_COMPILE_FLAGS=-m32
+export WS_BUILD_32BIT=true
 
-. build_pkg-config.sh
-. build_yasm.sh
-. build_ffmpeg.sh
-. build_opencv.sh
+if [ -n ${WS_BUILD_32BIT} ]
+then
+  # hikvision only have 32bit decode SDK for linux
+  export WS_COMPILE_FLAGS=-m32
+  export WS_LINK_FLAGS=-m32
+  export WS_LIBRARY_PATH=/lib
+else
+  export WS_LIBRARY_PATH=/lib64
+fi
+
+. build_pkg-config.sh && . build_ffmpeg.sh && . build_opencv.sh

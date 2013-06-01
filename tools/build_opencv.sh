@@ -1,4 +1,4 @@
-#!/bin/bash -v
+#!/bin/bash -ev
 
 FR_PREFIX=$(pwd)/../3rdparty
 OPENCV_VERSION=2.4.5
@@ -9,20 +9,24 @@ if [ ! -d opencv-${OPENCV_VERSION} ]
 then
   if [ ! -e opencv-${OPENCV_VERSION}.tar.gz ]
   then
-    wget http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/${OPENCV_VERSION}/opencv-${OPENCV_VERSION}.tar.gz/download
+    wget -O opencv-${OPENCV_VERSION}.tar.gz http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/${OPENCV_VERSION}/opencv-${OPENCV_VERSION}.tar.gz/download
   fi
   tar xf opencv-${OPENCV_VERSION}.tar.gz
 fi
 
 rm -rf ../build/opencv && mkdir -p ../build/opencv && cd ../build/opencv
 
+WS_C_COMPILER=gcc && type -P gcc44 &> /dev/null && WS_C_COMPILER=gcc44
+WS_CXX_COMPILER=g++ && type -P g++44 &> /dev/null && WS_CXX_COMPILER=g++44
+
 if [ -n "${WS_BUILD_SHARED}" ]
 then
   env -i PATH=${FR_PREFIX}/bin:/usr/local/bin:/usr/bin:/bin \
             cmake -D BUILD_SHARED_LIBS=ON \
-                  -D CMAKE_C_COMPILER=gcc44 \
+	          -D CMAKE_LIBRARY_PATH=${WS_LIBRARY_PATH} \
+                  -D CMAKE_C_COMPILER=${WS_C_COMPILER} \
                   -D CMAKE_C_FLAGS="${WS_COMPILE_FLAGS}" \
-                  -D CMAKE_CXX_COMPILER=g++44 \
+                  -D CMAKE_CXX_COMPILER=${WS_CXX_COMPILER} \
                   -D CMAKE_CXX_FLAGS="${WS_COMPILE_FLAGS}" \
                   -D CMAKE_INSTALL_PREFIX=${FR_PREFIX} \
                   -D CMAKE_SHARED_LINKER_FLAGS="-L${FR_PREFIX}/lib ${WS_LINK_FLAGS}" \
@@ -30,7 +34,7 @@ then
                   -D BUILD_JPEG=ON \
                   -D BUILD_PNG=ON \
                   -D BUILD_TIFF=ON \
-                  -D BUILD_ZLIB=ON \
+                  -D BUILD_ZLIB=OFF \
                   -D BUILD_JASPER=ON \
                   -D BUILD_OPENEXR=ON \
                   -D WITH_1394=OFF \
@@ -45,21 +49,19 @@ then
                   ../../src/opencv-${OPENCV_VERSION}
 else
   env -i PATH=${FR_PREFIX}/bin:/usr/local/bin:/usr/bin:/bin \
-            CC=/usr/bin/gcc44 \
-            CXX=/usr/bin/g++44 \
             cmake -D BUILD_SHARED_LIBS=OFF \
-                  -D COMPILE_FLAGS="${WS_COMPILE_FLAGS}" \
-                  -D LINK_FLAGS="${WS_LINK_FLAGS}" \
-                  -D CMAKE_C_COMPILER=gcc44 \
+	          -D CMAKE_LIBRARY_PATH=${WS_LIBRARY_PATH} \
+                  -D CMAKE_C_COMPILER=${WS_C_COMPILER} \
                   -D CMAKE_C_FLAGS="${WS_COMPILE_FLAGS}" \
-                  -D CMAKE_CXX_COMPILER=g++44 \
+                  -D CMAKE_CXX_COMPILER=${WS_CXX_COMPILER} \
                   -D CMAKE_CXX_FLAGS="${WS_COMPILE_FLAGS}" \
                   -D CMAKE_INSTALL_PREFIX=${FR_PREFIX} \
                   -D CMAKE_SHARED_LINKER_FLAGS="-L${FR_PREFIX}/lib ${WS_LINK_FLAGS}" \
+                  -D CMAKE_SKIP_RPATH=ON \
                   -D BUILD_JPEG=ON \
                   -D BUILD_PNG=ON \
                   -D BUILD_TIFF=ON \
-                  -D BUILD_ZLIB=ON \
+                  -D BUILD_ZLIB=OFF \
                   -D BUILD_JASPER=ON \
                   -D BUILD_OPENEXR=ON \
                   -D WITH_1394=OFF \

@@ -1,4 +1,4 @@
-#!/bin/bash -v
+#!/bin/bash -ev
 
 FR_PREFIX=$(pwd)/../3rdparty
 PC_VERSION=0.28
@@ -9,7 +9,7 @@ if [ ! -d pkg-config-${PC_VERSION} ]
 then
   if [ ! -e pkg-config-${PC_VERSION}.tar.gz ]
   then
-    wget http://pkgconfig.freedesktop.org/releases/pkg-config-${PC_VERSION}.tar.gz
+    wget -O pkg-config-${PC_VERSION}.tar.gz http://pkgconfig.freedesktop.org/releases/pkg-config-${PC_VERSION}.tar.gz
   fi
   tar xf pkg-config-${PC_VERSION}.tar.gz
 fi
