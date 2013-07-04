@@ -37,6 +37,8 @@ then
                 --disable-static \
                 --enable-shared \
                 --enable-pic \
+                --enable-debug \
+                --disable-stripping \
                 --extra-cflags="${WS_COMPILE_FLAGS}" \
                 --extra-cxxflags="${WS_COMPILE_FLAGS}" \
                 --extra-ldflags="${WS_LINK_FLAGS}"
@@ -54,6 +56,8 @@ else
                 --enable-static \
                 --disable-shared \
                 --disable-pic \
+                --enable-debug \
+                --disable-stripping \
                 --extra-cflags="${WS_COMPILE_FLAGS}" \
                 --extra-cxxflags="${WS_COMPILE_FLAGS}" \
                 --extra-ldflags="${WS_LINK_FLAGS}"

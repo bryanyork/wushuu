@@ -23,7 +23,8 @@ if [ -n "${WS_BUILD_SHARED}" ]
 then
   env -i PATH=${FR_PREFIX}/bin:/usr/local/bin:/usr/bin:/bin \
             cmake -D BUILD_SHARED_LIBS=ON \
-	          -D CMAKE_LIBRARY_PATH=${WS_LIBRARY_PATH} \
+                  -D CMAKE_BUILD_TYPE=Debug \
+                  -D CMAKE_LIBRARY_PATH=${WS_LIBRARY_PATH} \
                   -D CMAKE_C_COMPILER=${WS_C_COMPILER} \
                   -D CMAKE_C_FLAGS="${WS_COMPILE_FLAGS}" \
                   -D CMAKE_CXX_COMPILER=${WS_CXX_COMPILER} \
@@ -50,7 +51,8 @@ then
 else
   env -i PATH=${FR_PREFIX}/bin:/usr/local/bin:/usr/bin:/bin \
             cmake -D BUILD_SHARED_LIBS=OFF \
-	          -D CMAKE_LIBRARY_PATH=${WS_LIBRARY_PATH} \
+                  -D CMAKE_BUILD_TYPE=Debug \
+                  -D CMAKE_LIBRARY_PATH=${WS_LIBRARY_PATH} \
                   -D CMAKE_C_COMPILER=${WS_C_COMPILER} \
                   -D CMAKE_C_FLAGS="${WS_COMPILE_FLAGS}" \
                   -D CMAKE_CXX_COMPILER=${WS_CXX_COMPILER} \

@@ -1,6 +1,6 @@
 #!/bin/bash -ev
 
-#rm -rf $(pwd)/../3rdparty && rm -rf build
+rm -rf $(pwd)/../3rdparty && rm -rf build
 
 # have to integrate device support
 export WS_BUILD_SHARED=true

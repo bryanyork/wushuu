@@ -1,0 +1,1 @@
+/usr/bin/c++   -m32    CMakeFiles/fd.dir/facedetect.cpp.o  -o fd -rdynamic ../../3rdparty/lib/libopencv_highgui.so ../../3rdparty/lib/libopencv_objdetect.so ../../3rdparty/lib/libopencv_imgproc.so ../../3rdparty/lib/libopencv_core.so -Wl,-rpath,/home/jamesf/work/wushuu/3rdparty/lib: 

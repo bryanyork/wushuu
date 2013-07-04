@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC -m32 -m32 -Wl,--no-undefined -shared -Wl,-soname,libwsfd.so.1 -o libwsfd.so.1.0 CMakeFiles/wsfd.dir/facedetect.cpp.o ../../3rdparty/lib/libopencv_highgui.so ../../3rdparty/lib/libopencv_objdetect.so ../../3rdparty/lib/libopencv_imgproc.so ../../3rdparty/lib/libopencv_core.so -Wl,-rpath,/home/jamesf/work/wushuu/3rdparty/lib: 
