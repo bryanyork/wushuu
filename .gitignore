@@ -14,5 +14,16 @@
 
 # Intermediate Directories
 target
+3rdparty
+tools/build
+tools/src
+
+# cmake
+cmake_install.cmake
+install_manifest.txt
+CMakeCache.txt
+CMakeFiles
+Makefile
 
 *~
+*.swp

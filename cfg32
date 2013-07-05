@@ -1,0 +1,1 @@
+cmake -D CMAKE_INSTALL_PREFIX=3rdparty -D CMAKE_C_FLAGS="-m32" -D CMAKE_CXX_FLAGS="-m32" -D CMAKE_SHARED_LINKER_FLAGS="-m32 -Wl,--no-undefined" -D PKG_CONFIG_EXECUTABLE=3rdparty/bin/pkg-config .

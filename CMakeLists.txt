@@ -12,6 +12,7 @@ add_custom_command(OUTPUT target/wsnatives.list
   COMMAND ldd 3rdparty/lib/libwsfd.so | fgrep 3rdparty | cut -d " " -f 3 | sed -e "s#.*/##" > target/wsnatives.list)
 add_custom_command(OUTPUT wsnatives.jar
   COMMAND jar ARGS cfM ../../resource/native/wsnatives.jar @../../target/wsnatives.list
+  COMMAND jar ARGS ufM ../../resource/native/wsnatives.jar libwsfd.so
   WORKING_DIRECTORY 3rdparty/lib
   DEPENDS target/wsnatives.list)
 add_custom_target(wsnatives DEPENDS wsnatives.jar)
