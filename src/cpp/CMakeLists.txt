@@ -2,7 +2,6 @@ include_directories(BEFORE ${WS_PREFIX}/include)
 link_directories(${WS_PREFIX}/lib)
 
 set(OPENCV_LIBS opencv_core opencv_imgproc opencv_objdetect opencv_highgui)
-set(FFMPEG_LIBS avutil avcodec)
 
 set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 
