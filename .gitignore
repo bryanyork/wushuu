@@ -17,6 +17,9 @@ target
 3rdparty
 tools/build
 tools/src
+include
+lib
+tmp
 
 # cmake
 cmake_install.cmake

@@ -2,9 +2,45 @@ cmake_minimum_required(VERSION 2.8)
 
 project(wushuu)
 
-include(FindPkgConfig)
+include(ProcessorCount)
+ProcessorCount(PROCESSOR_COUNT)
 
-find_package(OpenCV 2.4.5 REQUIRED core imgproc objdetect highgui PATHS 3rdparty NO_DEFAULT_PATH)
+set(WS_PREFIX ${CMAKE_BINARY_DIR}/3rdparty)
+
+include(ExternalProject)
+set_directory_properties(PROPERTIES EP_PREFIX ${WS_PREFIX})
+
+externalproject_add(ffmpeg
+  URL http://www.ffmpeg.org/releases/ffmpeg-1.2.1.tar.bz2
+  CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
+                                           --enable-gpl
+                                           --enable-nonfree
+                                           --enable-version3
+                                           --disable-encoders
+                                           --disable-outdevs
+                                           --disable-doc
+                                           --disable-static
+                                           --enable-shared
+                                           --enable-pic
+                                           --enable-debug
+                                           --disable-stripping
+  BUILD_COMMAND env LD_RUN_PATH=\$ORIGIN:\$ORIGIN/../lib make -j${PROCESSOR_COUNT})
+
+externalproject_add(opencv
+  DEPENDS ffmpeg
+  URL http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.6/opencv-2.4.6.tar.gz
+  CMAKE_COMMAND env PKG_CONFIG_PATH=${WS_PREFIX}/lib/pkgconfig cmake
+  CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
+             -D CMAKE_INSTALL_RPATH="\$ORIGIN"
+             -D BUILD_DOCS=OFF
+             -D BUILD_PERF_TESTS=OFF
+             -D BUILD_TESTS=OFF
+             -D BUILD_opencv_python=OFF
+             -D BUILD_opencv_java=OFF
+             -D BUILD_opencv_world=ON
+             -D BUILD_EXAMPLES=OFF
+	     -D BUILD_opencv_apps=ON
+  BUILD_COMMAND env LD_RUN_PATH=\$ORIGIN:\$ORIGIN/../lib make -j${PROCESSOR_COUNT})
 
 add_subdirectory(src/cpp)
 

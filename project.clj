@@ -1,7 +1,7 @@
 (defproject wushuu "0.0.1-SNAPSHOT"
   :source-paths ["src/clj"]
   :java-source-paths ["src/jvm"]
-  :resource-paths ["resource"]
+  :resource-paths ["res"]
   :jvm-opts ["-Djna.library.path=3rdparty/lib"]
   :aot :all
   :dependencies [[net.java.dev.jna/jna "3.5.2"]
