@@ -31,16 +31,17 @@ externalproject_add(opencv
   URL http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.6/opencv-2.4.6.tar.gz
   CMAKE_COMMAND env PKG_CONFIG_PATH=${WS_PREFIX}/lib/pkgconfig cmake
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
-             -D CMAKE_INSTALL_RPATH="\$ORIGIN"
+             -D CMAKE_SKIP_RPATH=ON
              -D BUILD_DOCS=OFF
              -D BUILD_PERF_TESTS=OFF
              -D BUILD_TESTS=OFF
              -D BUILD_opencv_python=OFF
              -D BUILD_opencv_java=OFF
-             -D BUILD_opencv_world=ON
+	     -D BUILD_opencv_world=OFF
 	     -D BUILD_EXAMPLES=ON
 	     -D BUILD_opencv_apps=ON
-  BUILD_COMMAND env LD_RUN_PATH=\$ORIGIN:\$ORIGIN/../lib make -j${PROCESSOR_COUNT})
+  BUILD_COMMAND env LD_RUN_PATH=\$ORIGIN:\$ORIGIN/../lib make -j${PROCESSOR_COUNT}
+  INSTALL_COMMAND make install)
 
 add_subdirectory(src/cpp)
 

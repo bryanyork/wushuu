@@ -20,7 +20,7 @@ set_target_properties(fd PROPERTIES
   INSTALL_RPATH "\$ORIGIN/../lib")
 
 add_custom_command(TARGET wsfd POST_BUILD
-  COMMAND cmake -E echo "Creating wsnatives.jar ..."
+  COMMAND cmake -E cmake_echo_color --red --bold "Creating wsnatives.jar ..."
   COMMAND ldd $<TARGET_LINKER_FILE:wsfd> | fgrep ${WS_PREFIX} | cut -d " " -f 3 | sed -e "s#.*/##" > ${WS_PREFIX}/wsnatives.list
   COMMAND jar ARGS cfM ${CMAKE_BINARY_DIR}/res/native/wsnatives.jar @${WS_PREFIX}/wsnatives.list
   COMMAND jar ARGS ufM ${CMAKE_BINARY_DIR}/res/native/wsnatives.jar $<TARGET_LINKER_FILE_NAME:wsfd>
