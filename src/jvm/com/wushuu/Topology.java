@@ -14,7 +14,6 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
-import org.opencv.core.Core;
 
 public class Topology {
     

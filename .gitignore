@@ -28,5 +28,7 @@ CMakeCache.txt
 CMakeFiles
 Makefile
 
+.lein-repl-history
+
 *~
 *.swp
