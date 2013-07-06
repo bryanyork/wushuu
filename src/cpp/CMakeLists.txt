@@ -18,3 +18,10 @@ target_link_libraries(fd ${OPENCV_LIBS})
 set_target_properties(fd PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY ${WS_PREFIX}/bin
   INSTALL_RPATH "\$ORIGIN/../lib")
+
+add_custom_command(TARGET wsfd POST_BUILD
+  COMMAND cmake -E echo "Creating wsnatives.jar ..."
+  COMMAND ldd $<TARGET_LINKER_FILE:wsfd> | fgrep ${WS_PREFIX} | cut -d " " -f 3 | sed -e "s#.*/##" > ${WS_PREFIX}/wsnatives.list
+  COMMAND jar ARGS cfM ${CMAKE_BINARY_DIR}/res/native/wsnatives.jar @${WS_PREFIX}/wsnatives.list
+  COMMAND jar ARGS ufM ${CMAKE_BINARY_DIR}/res/native/wsnatives.jar $<TARGET_LINKER_FILE_NAME:wsfd>
+  WORKING_DIRECTORY ${WS_PREFIX}/lib)

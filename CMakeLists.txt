@@ -38,17 +38,9 @@ externalproject_add(opencv
              -D BUILD_opencv_python=OFF
              -D BUILD_opencv_java=OFF
              -D BUILD_opencv_world=ON
-             -D BUILD_EXAMPLES=OFF
+	     -D BUILD_EXAMPLES=ON
 	     -D BUILD_opencv_apps=ON
   BUILD_COMMAND env LD_RUN_PATH=\$ORIGIN:\$ORIGIN/../lib make -j${PROCESSOR_COUNT})
 
 add_subdirectory(src/cpp)
 
-add_custom_command(OUTPUT target/wsnatives.list
-  COMMAND ldd target/lib/libwsfd.so | fgrep target | cut -d " " -f 3 | sed -e "s#.*/##" > target/wsnatives.list)
-add_custom_command(OUTPUT wsnatives.jar
-  COMMAND jar ARGS cfM ../../resource/native/wsnatives.jar @../../target/wsnatives.list
-  COMMAND jar ARGS ufM ../../resource/native/wsnatives.jar libwsfd.so
-  WORKING_DIRECTORY target/lib
-  DEPENDS target/wsnatives.list)
-add_custom_target(wsnatives DEPENDS wsnatives.jar)
