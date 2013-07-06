@@ -45,3 +45,14 @@ externalproject_add(opencv
 
 add_subdirectory(src/cpp)
 
+add_custom_target(jvm
+  COMMAND cmake -E cmake_echo_color --red --bold "Compiling Java sources ..."
+  COMMAND lein javac
+  COMMAND cmake -E cmake_echo_color --red --bold "Compiling Clojure sources ..."
+  COMMAND lein compile
+  DEPENDS wsfd)
+
+add_custom_target(storm
+  COMMAND cmake -E cmake_echo_color --red --bold "Making storm topology ..."
+  COMMAND lein uberjar
+  DEPENDS jvm)
