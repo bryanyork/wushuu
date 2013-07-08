@@ -11,29 +11,36 @@ include(ExternalProject)
 set_directory_properties(PROPERTIES EP_PREFIX ${WS_PREFIX})
 
 if(UNIX)
+  externalproject_add(pkg-config
+    URL http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz
+    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX})
+
   externalproject_add(ffmpeg
     URL http://www.ffmpeg.org/releases/ffmpeg-1.2.1.tar.bz2
-    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
+    CONFIGURE_COMMAND CFLAGS=-fvisibility=hidden <SOURCE_DIR>/configure
+                                             --prefix=${WS_PREFIX}
                                              --enable-gpl
                                              --enable-nonfree
                                              --enable-version3
-                                             --disable-encoders
-                                             --disable-outdevs
+                                             --disable-devices
                                              --disable-doc
-                                             --disable-static
-                                             --enable-shared
+                                             --disable-shared
                                              --enable-pic
+                                             --enable-static
                                              --enable-debug
                                              --disable-stripping
-    BUILD_COMMAND env LD_RUN_PATH=\$ORIGIN:\$ORIGIN/../lib make -j${PROCESSOR_COUNT})
+    BUILD_COMMAND make -j${PROCESSOR_COUNT})
 endif()
 
 externalproject_add(opencv
-  DEPENDS ffmpeg
+  DEPENDS pkg-config ffmpeg
   URL http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.6/opencv-2.4.6.tar.gz
-  CMAKE_COMMAND env PKG_CONFIG_PATH=${WS_PREFIX}/lib/pkgconfig cmake
-  CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
+  CMAKE_ARGS -D CMAKE_FIND_ROOT_PATH=${WS_PREFIX}
+             -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D CMAKE_SKIP_RPATH=ON
+             -D CMAKE_POSITION_INDEPENDENT_CODE=ON
+	     -D CMAKE_EXE_LINKER_FLAGS=-Wl,--as-needed
+             -D BUILD_SHARED_LIBS=OFF
              -D WITH_1394=OFF
              -D WITH_AVFOUNDATION=OFF
              -D WITH_CARBON=OFF
@@ -69,7 +76,6 @@ externalproject_add(opencv
              -D WITH_OPENCL=OFF
              -D WITH_OPENCLAMDFFT=OFF
              -D WITH_OPENCLAMDBLAS=OFF
-             -D BUILD_SHARED_LIBS=${UNIX}
              -D BUILD_opencv_apps=ON
              -D BUILD_DOCS=OFF
              -D BUILD_EXAMPLES=OFF
@@ -81,19 +87,30 @@ externalproject_add(opencv
              -D BUILD_opencv_python=OFF
              -D BUILD_opencv_java=OFF
              -D BUILD_opencv_world=OFF
-  BUILD_COMMAND env LD_RUN_PATH=\$ORIGIN:\$ORIGIN/../lib make -j${PROCESSOR_COUNT}
+  BUILD_COMMAND make -j${PROCESSOR_COUNT}
   INSTALL_COMMAND make install)
 
-add_subdirectory(src/cpp)
+set(CMAKE_SHARED_LINKER_FLAGS, "-Wl,--as-needed")
+set(CMAKE_EXE_LINKER_FLAGS, "-Wl,--as-needed -Wl,-rpath,\\$ORIGIN/../lib")
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+set(CMAKE_PREFIX_PATH ${WS_PREFIX})
+set(CMAKE_FIND_ROOT_PATH ${WS_PREFIX})
 
-add_custom_target(jvm
-  COMMAND cmake -E cmake_echo_color --red --bold "Compiling Java sources ..."
-  COMMAND lein javac
-  COMMAND cmake -E cmake_echo_color --red --bold "Compiling Clojure sources ..."
-  COMMAND lein compile
-  DEPENDS wsfd)
-
-add_custom_target(storm
-  COMMAND cmake -E cmake_echo_color --red --bold "Making storm topology ..."
-  COMMAND lein uberjar
-  DEPENDS jvm)
+#find_package(OpenCV REQUIRED ONLY_CMAKE_FIND_ROOT_PATH)
+#message("---------------")
+#message(${OpenCV_LIBS})
+#include(FindPkgConfig)
+#
+#add_subdirectory(src/cpp)
+#
+#add_custom_target(jvm
+#  COMMAND cmake -E cmake_echo_color --red --bold "Compiling Java sources ..."
+#  COMMAND lein javac
+#  COMMAND cmake -E cmake_echo_color --red --bold "Compiling Clojure sources ..."
+#  COMMAND lein compile
+#  DEPENDS wsfd)
+#
+#add_custom_target(storm
+#  COMMAND cmake -E cmake_echo_color --red --bold "Making storm topology ..."
+#  COMMAND lein uberjar
+#  DEPENDS jvm)
