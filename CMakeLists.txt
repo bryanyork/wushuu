@@ -35,8 +35,7 @@ endif()
 externalproject_add(opencv
   DEPENDS pkg-config ffmpeg
   URL http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.6/opencv-2.4.6.tar.gz
-  CMAKE_ARGS -D CMAKE_FIND_ROOT_PATH=${WS_PREFIX}
-             -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
+  CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D CMAKE_SKIP_RPATH=ON
              -D CMAKE_POSITION_INDEPENDENT_CODE=ON
 	     -D CMAKE_EXE_LINKER_FLAGS=-Wl,--as-needed
@@ -87,30 +86,22 @@ externalproject_add(opencv
              -D BUILD_opencv_python=OFF
              -D BUILD_opencv_java=OFF
              -D BUILD_opencv_world=OFF
-  BUILD_COMMAND make -j${PROCESSOR_COUNT}
-  INSTALL_COMMAND make install)
+  BUILD_COMMAND make -j${PROCESSOR_COUNT})
 
-set(CMAKE_SHARED_LINKER_FLAGS, "-Wl,--as-needed")
-set(CMAKE_EXE_LINKER_FLAGS, "-Wl,--as-needed -Wl,-rpath,\\$ORIGIN/../lib")
-set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-set(CMAKE_PREFIX_PATH ${WS_PREFIX})
-set(CMAKE_FIND_ROOT_PATH ${WS_PREFIX})
+externalproject_add(wushuu_lib
+  DEPENDS pkg-config ffmpeg opencv
+  URL src/cpp
+  CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
+  CMAKE_ARGS -D WS_PREFIX=${WS_PREFIX})
 
-#find_package(OpenCV REQUIRED ONLY_CMAKE_FIND_ROOT_PATH)
-#message("---------------")
-#message(${OpenCV_LIBS})
-#include(FindPkgConfig)
-#
-#add_subdirectory(src/cpp)
-#
-#add_custom_target(jvm
-#  COMMAND cmake -E cmake_echo_color --red --bold "Compiling Java sources ..."
-#  COMMAND lein javac
-#  COMMAND cmake -E cmake_echo_color --red --bold "Compiling Clojure sources ..."
-#  COMMAND lein compile
-#  DEPENDS wsfd)
-#
-#add_custom_target(storm
-#  COMMAND cmake -E cmake_echo_color --red --bold "Making storm topology ..."
-#  COMMAND lein uberjar
-#  DEPENDS jvm)
+add_custom_target(jvm
+  COMMAND cmake -E cmake_echo_color --red --bold "Compiling Java sources ..."
+  COMMAND lein javac
+  COMMAND cmake -E cmake_echo_color --red --bold "Compiling Clojure sources ..."
+  COMMAND lein compile
+  DEPENDS wsfd)
+
+add_custom_target(storm
+  COMMAND cmake -E cmake_echo_color --red --bold "Making storm topology ..."
+  COMMAND lein uberjar
+  DEPENDS jvm)
