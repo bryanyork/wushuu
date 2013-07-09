@@ -13,16 +13,16 @@ On CentOS, the easiest way to do is to install ["Red Hat DevTools"](http://peopl
 
 1. configure source
 
-    cmake .
+        cmake .
 
 2. build native library and dependencies, may take a while
 
-    make
+        make
 
 3. build java/clojure source
 
-    make jvm
+        make jvm
 
 4. make storm package
 
-    make storm
+        make storm
