@@ -13,12 +13,12 @@ set_directory_properties(PROPERTIES EP_PREFIX ${WS_PREFIX})
 if(UNIX)
   externalproject_add(pkg-config
     URL http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz
-    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX})
+    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
+                                             --with-internal-glib)
 
   externalproject_add(ffmpeg
     URL http://www.ffmpeg.org/releases/ffmpeg-1.2.1.tar.bz2
-    CONFIGURE_COMMAND CFLAGS=-fvisibility=hidden <SOURCE_DIR>/configure
-                                             --prefix=${WS_PREFIX}
+    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
                                              --enable-gpl
                                              --enable-nonfree
                                              --enable-version3
@@ -29,6 +29,7 @@ if(UNIX)
                                              --enable-static
                                              --enable-debug
                                              --disable-stripping
+                                             --extra-cflags=-fvisibility=hidden 
     BUILD_COMMAND make -j${PROCESSOR_COUNT})
 endif()
 
@@ -38,7 +39,7 @@ externalproject_add(opencv
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D CMAKE_SKIP_RPATH=ON
              -D CMAKE_POSITION_INDEPENDENT_CODE=ON
-	     -D CMAKE_EXE_LINKER_FLAGS=-Wl,--as-needed
+             -D CMAKE_EXE_LINKER_FLAGS=-Wl,--as-needed
              -D BUILD_SHARED_LIBS=OFF
              -D WITH_1394=OFF
              -D WITH_AVFOUNDATION=OFF
@@ -92,7 +93,7 @@ externalproject_add(wushuu_lib
   DEPENDS pkg-config ffmpeg opencv
   URL src/cpp
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
-  CMAKE_ARGS -D WS_PREFIX=${WS_PREFIX})
+             -D WS_PREFIX=${WS_PREFIX})
 
 add_custom_target(jvm
   COMMAND cmake -E cmake_echo_color --red --bold "Compiling Java sources ..."
