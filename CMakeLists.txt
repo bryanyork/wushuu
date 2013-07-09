@@ -89,18 +89,29 @@ externalproject_add(opencv
              -D BUILD_opencv_world=OFF
   BUILD_COMMAND make -j${PROCESSOR_COUNT})
 
-externalproject_add(wushuu_lib
+externalproject_add(wushuu-native
   DEPENDS pkg-config ffmpeg opencv
   URL src/cpp
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D WS_PREFIX=${WS_PREFIX})
+
+externalproject_add_step(wushuu-native force-rebuild
+  COMMAND cmake -E cmake_echo_color --red --bold "Forcing rebuild of wushuu-native ..."
+  DEPENDEES configure
+  DEPENDERS build
+  ALWAYS 1)
+
+externalproject_add_step(wushuu-native stage
+  COMMAND cmake -E cmake_echo_color --red --bold "Staging native libraries ..."
+  COMMAND cmake -E copy_if_different <INSTALL_DIR>/lib/libwsfd.so res/native
+  DEPENDEES install)
 
 add_custom_target(jvm
   COMMAND cmake -E cmake_echo_color --red --bold "Compiling Java sources ..."
   COMMAND lein javac
   COMMAND cmake -E cmake_echo_color --red --bold "Compiling Clojure sources ..."
   COMMAND lein compile
-  DEPENDS wsfd)
+  DEPENDS wushuu-native)
 
 add_custom_target(storm
   COMMAND cmake -E cmake_echo_color --red --bold "Making storm topology ..."
