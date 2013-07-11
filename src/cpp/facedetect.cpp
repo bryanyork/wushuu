@@ -1,36 +1,40 @@
+#include <iostream>
+#include <vector>
+
 #include "opencv2/objdetect/objdetect.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
-#include <iostream>
-#include <stdio.h>
-
-using namespace std;
-using namespace cv;
-
-
-void detectAndDraw( Mat& img,
-                   CascadeClassifier& cascade,
+void detectAndDraw( cv::Mat& img,
+                   cv::CascadeClassifier& cascade,
                    double scale);
+
+typedef void (*fd_cb)(int x, int y, int radius);
+
+fd_cb g_fd_cb = 0;
+
+extern "C" void set_cb(fd_cb fc) {
+    g_fd_cb = fc;
+}
 
 
 int facedetect( double scale, const char* cascadeXml, const char* videoFile )
 {
     CvCapture* capture = 0;
-    Mat frame, frameCopy, image;
+    cv::Mat frame, frameCopy, image;
     
-    CascadeClassifier cascade;
+    cv::CascadeClassifier cascade;
     
     if( !cascade.load( cascadeXml ) )
     {
-        cerr << "ERROR: Could not load classifier cascade" << endl;
+        std::cerr << "ERROR: Could not load classifier cascade" << std::endl;
         return -1;
     }
     
     capture = cvCaptureFromAVI( videoFile );
     if(!capture)
     {
-        cerr << "Capture from AVI didn't work" << endl;
+        std::cerr << "Capture from AVI didn't work" << std::endl;
         return 0;
     }
     
@@ -58,14 +62,14 @@ int facedetect( double scale, const char* cascadeXml, const char* videoFile )
     return 0;
 }
 
-void detectAndDraw( Mat& img,
-                   CascadeClassifier& cascade,
+void detectAndDraw( cv::Mat& img,
+                   cv::CascadeClassifier& cascade,
                    double scale)
 {
     int i = 0;
     double t = 0;
-    vector<Rect> faces;
-    const static Scalar colors[] =  { CV_RGB(0,0,255),
+    std::vector<cv::Rect> faces;
+    const static cv::Scalar colors[] =  { CV_RGB(0,0,255),
         CV_RGB(0,128,255),
         CV_RGB(0,255,255),
         CV_RGB(0,255,0),
@@ -73,10 +77,10 @@ void detectAndDraw( Mat& img,
         CV_RGB(255,255,0),
         CV_RGB(255,0,0),
         CV_RGB(255,0,255)} ;
-    Mat gray, smallImg( cvRound (img.rows/scale), cvRound(img.cols/scale), CV_8UC1 );
+    cv::Mat gray, smallImg( cvRound (img.rows/scale), cvRound(img.cols/scale), CV_8UC1 );
     
-    cvtColor( img, gray, CV_BGR2GRAY );
-    resize( gray, smallImg, smallImg.size(), 0, 0, INTER_LINEAR );
+    cv::cvtColor( img, gray, CV_BGR2GRAY );
+    cv::resize( gray, smallImg, smallImg.size(), 0, 0, cv::INTER_LINEAR );
     equalizeHist( smallImg, smallImg );
     
     t = (double)cvGetTickCount();
@@ -86,21 +90,23 @@ void detectAndDraw( Mat& img,
         //|CV_HAAR_DO_ROUGH_SEARCH
         |CV_HAAR_SCALE_IMAGE
         ,
-        Size(30, 30) );
+        cv::Size(30, 30) );
     t = (double)cvGetTickCount() - t;
     
-    //printf( "detection time = %g ms\n", t/((double)cvGetTickFrequency()*1000.) );
-    for( vector<Rect>::const_iterator r = faces.begin(); r != faces.end(); r++, i++ )
+    for( std::vector<cv::Rect>::const_iterator r = faces.begin(); r != faces.end(); r++, i++ )
     {
-        Mat smallImgROI;
-        Point center;
-        Scalar color = colors[i%8];
+        cv::Mat smallImgROI;
+        cv::Point center;
+        cv::Scalar color = colors[i%8];
         int radius;
         center.x = cvRound((r->x + r->width*0.5)*scale);
         center.y = cvRound((r->y + r->height*0.5)*scale);
         radius = cvRound((r->width + r->height)*0.25*scale);
         
-        cout << center.x << " " << center.y << " " << radius << endl;
+        std::cout << center.x << " " << center.y << " " << radius << std::endl;
+        if(g_fd_cb) {
+            g_fd_cb(center.x, center.y, radius);
+        }
     }
     
     return;
@@ -108,19 +114,19 @@ void detectAndDraw( Mat& img,
 
 extern "C" void test1()
 {
-    cout << "from test" << endl;
+    std::cout << "from test" << std::endl;
 }
 
 int main( int argc, const char** argv )
 {
-    cout << "calling with " << argc << ", " << argv[0] << ", " << argv[1] << endl;
+    std::cout << "calling with " << argc << ", " << argv[0] << ", " << argv[1] << std::endl;
     facedetect(1.0, argv[1], argv[2]);
 }
 
 extern "C" void test2(int argc, const char** argv)
 {
-    cout << "***" << argv[0] << endl;
-    cout << "***" << argv[1] << endl;
-    main(argc, argv);
+    std::cout << "***" << argv[0] << std::endl;
+    std::cout << "***" << argv[1] << std::endl;
+    facedetect(1.0, argv[0], argv[1]);
 }
 

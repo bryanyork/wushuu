@@ -3,7 +3,7 @@ wushuu
 
 Prerequisite
 ------------
-gcc, jdk, lein, cmake
+gcc, jdk, lein, cmake, and, most important, internet connection :)
 
 Building
 --------
