@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.sun.jna.Callback;
 
 import org.apache.commons.vfs2.VFS;
 import org.apache.commons.vfs2.FileSystemManager;
@@ -19,6 +20,12 @@ public class SimpleSample {
 
       void test1();
       void test2(int argc, String[] argv);
+
+      interface fd_cb extends Callback {
+          void invoke(int x, int y, int radius);
+      }
+
+      void set_cb(fd_cb fc);
   }
 
   public static void main(String[] args) throws Exception {
@@ -43,6 +50,15 @@ public class SimpleSample {
         //fsm.close();
     }
     FDLibrary.INSTANCE.test1();
+
+    FDLibrary.fd_cb fc = new FDLibrary.fd_cb() {
+        public void invoke(int x, int y, int radius) {
+            System.out.printf("from java, x=%d, y=%d, r=%d", x, y, radius);
+            System.out.println();
+        }
+    };
+    FDLibrary.INSTANCE.set_cb(fc);
+
     FDLibrary.INSTANCE.test2(args.length, args);
     System.out.println("Leave to OpenCV");
   }
