@@ -15,13 +15,22 @@ if(UNIX)
     URL http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
                                              --with-internal-glib)
+  externalproject_add(x264
+    GIT_REPOSITORY git://git.videolan.org/x264.git
+    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
+                                             --enable-pic
+                                             --enable-static
+                                             --disable-opencl
+    BUILD_COMMAND make -j ${PROCESSOR_COUNT})
 
   externalproject_add(ffmpeg
+    DEPENDS x264
     URL http://www.ffmpeg.org/releases/ffmpeg-1.2.1.tar.bz2
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
                                              --enable-gpl
                                              --enable-nonfree
                                              --enable-version3
+                                             --enable-libx264
                                              --disable-devices
                                              --disable-doc
                                              --disable-shared
@@ -29,8 +38,9 @@ if(UNIX)
                                              --enable-static
                                              --enable-debug
                                              --disable-stripping
-                                             --extra-cflags=-fvisibility=hidden 
-    BUILD_COMMAND make -j${PROCESSOR_COUNT})
+                                             --extra-cflags=-I${WS_PREFIX}/include
+                                             --extra-cflags=-fvisibility=hidden
+    BUILD_COMMAND make -j ${PROCESSOR_COUNT})
 endif()
 
 externalproject_add(opencv
@@ -87,18 +97,25 @@ externalproject_add(opencv
              -D BUILD_opencv_python=OFF
              -D BUILD_opencv_java=OFF
              -D BUILD_opencv_world=OFF
-  BUILD_COMMAND make -j${PROCESSOR_COUNT})
+  BUILD_COMMAND make -j ${PROCESSOR_COUNT})
+
+externalproject_add(boost
+  URL http://sourceforge.net/projects/boost/files/boost/1.54.0/boost_1_54_0.tar.bz2
+  CONFIGURE_COMMAND ./bootstrap.sh --prefix=${WS_PREFIX}
+                                   --with-libraries=log,thread
+  BUILD_COMMAND ./b2 -j ${PROCESSOR_COUNT} link=static
+  INSTALL_COMMAND ./b2 install
+  BUILD_IN_SOURCE 1)
 
 externalproject_add(wushuu-native
-  DEPENDS pkg-config ffmpeg opencv
+  DEPENDS pkg-config ffmpeg opencv boost
   URL src/cpp
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D WS_PREFIX=${WS_PREFIX})
 
 externalproject_add_step(wushuu-native force-rebuild
   COMMAND cmake -E cmake_echo_color --red --bold "Forcing rebuild of wushuu-native ..."
-  DEPENDEES configure
-  DEPENDERS build
+  DEPENDERS download
   ALWAYS 1)
 
 externalproject_add_step(wushuu-native stage
