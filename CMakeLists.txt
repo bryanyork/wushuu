@@ -11,6 +11,8 @@ include(ExternalProject)
 set_directory_properties(PROPERTIES EP_PREFIX ${WS_PREFIX})
 
 if(UNIX)
+  set(CMAKE_BUILD_TOOL "${CMAKE_BUILD_TOOL} -j ${PROCESSOR_COUNT}")
+
   externalproject_add(pkg-config
     URL http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
@@ -20,9 +22,8 @@ if(UNIX)
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
                                              --enable-pic
                                              --enable-static
-                                             --disable-opencl
-    BUILD_COMMAND make -j ${PROCESSOR_COUNT})
-
+                                             --extra-cflags=-fvisibility=hidden
+                                             --disable-opencl)
   externalproject_add(ffmpeg
     DEPENDS x264
     URL http://www.ffmpeg.org/releases/ffmpeg-1.2.1.tar.bz2
@@ -40,7 +41,7 @@ if(UNIX)
                                              --disable-stripping
                                              --extra-cflags=-I${WS_PREFIX}/include
                                              --extra-cflags=-fvisibility=hidden
-    BUILD_COMMAND make -j ${PROCESSOR_COUNT})
+                                             --extra-ldflags=-L${WS_PREFIX}/lib)
 endif()
 
 externalproject_add(opencv
@@ -96,15 +97,14 @@ externalproject_add(opencv
              #-D BUILD_WITH_STATIC_CRT  using default
              -D BUILD_opencv_python=OFF
              -D BUILD_opencv_java=OFF
-             -D BUILD_opencv_world=OFF
-  BUILD_COMMAND make -j ${PROCESSOR_COUNT})
+             -D BUILD_opencv_world=OFF)
 
 externalproject_add(boost
   URL http://sourceforge.net/projects/boost/files/boost/1.54.0/boost_1_54_0.tar.bz2
   CONFIGURE_COMMAND ./bootstrap.sh --prefix=${WS_PREFIX}
-                                   --with-libraries=log,thread
-  BUILD_COMMAND ./b2 -j ${PROCESSOR_COUNT} link=static
-  INSTALL_COMMAND ./b2 install
+                                   --with-libraries=thread
+  BUILD_COMMAND ./b2 -j ${PROCESSOR_COUNT} link=static cxxflags=-fPIC
+  INSTALL_COMMAND ./b2 install link=static
   BUILD_IN_SOURCE 1)
 
 externalproject_add(wushuu-native

@@ -24,7 +24,7 @@ target_link_libraries(wsfd ${OpenCV_LIBS} ${FFMPEG_LIBRARIES} ${X264_LIBRARIES} 
 set_target_properties(wsfd PROPERTIES
   VERSION 1.0
   SOVERSION 1
-  LINK_FLAGS "-Wl,--as-needed"
+  LINK_FLAGS "-Wl,--as-needed -Wl,-Bsymbolic"
   INSTALL_RPATH "\$ORIGIN")
 
 add_executable(fd facedetect.cpp)
