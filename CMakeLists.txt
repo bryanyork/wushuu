@@ -28,9 +28,9 @@ if(UNIX)
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
                                              --with-internal-glib)
 
-  ws_ep_src_url(X264 x264 git://git.videolan.org/x264.git)
+  ws_ep_src_url(X264 last_x264.tar.gz ftp://ftp.videolan.org/pub/x264/snapshots/last_x264.tar.bz2)
   externalproject_add(x264
-    GIT_REPOSITORY ${WS_X264_URL}
+    URL ${WS_X264_URL}
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
                                              --enable-pic
                                              --enable-static
