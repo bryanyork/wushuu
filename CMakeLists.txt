@@ -10,23 +10,37 @@ set(WS_PREFIX ${CMAKE_BINARY_DIR}/target)
 include(ExternalProject)
 set_directory_properties(PROPERTIES EP_PREFIX ${WS_PREFIX})
 
+function(ws_ep_src_url NAME LOCAL REMOTE)
+  if(EXISTS ${CMAKE_SOURCE_DIR}/3rdparty/${LOCAL})
+    set(WS_${NAME}_URL ${CMAKE_SOURCE_DIR}/3rdparty/${LOCAL} PARENT_SCOPE)
+  else()
+    set(WS_${NAME}_URL ${REMOTE} PARENT_SCOPE)
+  endif()
+endfunction()
+
+
 if(UNIX)
   set(CMAKE_BUILD_TOOL "${CMAKE_BUILD_TOOL} -j ${PROCESSOR_COUNT}")
 
+  ws_ep_src_url(PKG_CONFIG pkg-config-0.28.tar.gz http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz)
   externalproject_add(pkg-config
-    URL http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz
+    URL ${WS_PKG_CONFIG_URL}
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
                                              --with-internal-glib)
+
+  ws_ep_src_url(X264 x264 git://git.videolan.org/x264.git)
   externalproject_add(x264
-    GIT_REPOSITORY git://git.videolan.org/x264.git
+    GIT_REPOSITORY ${WS_X264_URL}
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
                                              --enable-pic
                                              --enable-static
                                              --extra-cflags=-fvisibility=hidden
                                              --disable-opencl)
+
+  ws_ep_src_url(FFMPEG ffmpeg-1.2.1.tar.bz2 http://www.ffmpeg.org/releases/ffmpeg-1.2.1.tar.bz2)
   externalproject_add(ffmpeg
     DEPENDS x264
-    URL http://www.ffmpeg.org/releases/ffmpeg-1.2.1.tar.bz2
+    URL ${WS_FFMPEG_URL}
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
                                              --enable-gpl
                                              --enable-nonfree
@@ -44,9 +58,10 @@ if(UNIX)
                                              --extra-ldflags=-L${WS_PREFIX}/lib)
 endif()
 
+ws_ep_src_url(OPENCV opencv-2.4.6.tar.gz http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.6/opencv-2.4.6.tar.gz)
 externalproject_add(opencv
   DEPENDS pkg-config ffmpeg
-  URL http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.6/opencv-2.4.6.tar.gz
+  URL ${WS_OPENCV_URL}
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D CMAKE_SKIP_RPATH=ON
              -D CMAKE_POSITION_INDEPENDENT_CODE=ON
@@ -99,8 +114,9 @@ externalproject_add(opencv
              -D BUILD_opencv_java=OFF
              -D BUILD_opencv_world=OFF)
 
+ws_ep_src_url(BOOST boost_1_54_0.tar.bz2 http://sourceforge.net/projects/boost/files/boost/1.54.0/boost_1_54_0.tar.bz2)
 externalproject_add(boost
-  URL http://sourceforge.net/projects/boost/files/boost/1.54.0/boost_1_54_0.tar.bz2
+  URL ${WS_BOOST_URL}
   CONFIGURE_COMMAND ./bootstrap.sh --prefix=${WS_PREFIX}
                                    --with-libraries=thread
   BUILD_COMMAND ./b2 -j ${PROCESSOR_COUNT} link=static cxxflags=-fPIC
