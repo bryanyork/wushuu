@@ -80,8 +80,10 @@ externalproject_add(opencv
              -D WITH_GTK=OFF
              -D WITH_IMAGEIO=OFF
              -D WITH_IPP=OFF
-             -D WITH_JASPER=OFF
-             -D WITH_JPEG=OFF
+             -D WITH_JASPER=ON
+             -D BUILD_JASPER=ON
+             -D WITH_JPEG=ON
+             -D BUILD_JPEG=ON
              -D WITH_OPENEXR=OFF
              -D WITH_OPENNI=OFF
              -D WITH_PNG=OFF
