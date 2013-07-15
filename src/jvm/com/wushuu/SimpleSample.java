@@ -5,6 +5,7 @@ import java.io.File;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Callback;
+import com.sun.jna.Pointer;
 
 import org.apache.commons.vfs2.VFS;
 import org.apache.commons.vfs2.FileSystemManager;
@@ -16,16 +17,15 @@ import org.apache.commons.vfs2.impl.StandardFileSystemManager;
 public class SimpleSample {
 
   public interface FDLibrary extends Library {
-      FDLibrary INSTANCE = (FDLibrary) Native.loadLibrary("wsfd", FDLibrary.class);
+    FDLibrary INSTANCE = (FDLibrary) Native.loadLibrary("wsfd", FDLibrary.class);
 
-      void test1();
-      void test2(int argc, String[] argv);
+    interface fd_cb_t extends Callback {
+        void invoke(int x, int y, int radius);
+    }
 
-      interface fd_cb extends Callback {
-          void invoke(int x, int y, int radius);
-      }
-
-      void set_cb(fd_cb fc);
+    Pointer facedetect_create(String cascadeXml, fd_cb_t fd_cb);
+    void facedetect_destroy(Pointer fd);
+    void facedetect_detect_image(Pointer fd, String imgFile);
   }
 
   public static void main(String[] args) throws Exception {
@@ -34,11 +34,10 @@ public class SimpleSample {
     System.out.println(args[0]);
     System.out.println(System.getProperty("java.library.path"));
     System.out.println(System.getProperty("jna.library.path"));
+
     if(null == System.getProperty("jna.library.path")) {
         StandardFileSystemManager fsm = (StandardFileSystemManager)VFS.getManager();
         File nf = fsm.getTemporaryFileStore().allocateFile("wsnatives");
-        System.out.println("&&&&&&&&&&");
-        System.out.println(nf);
         for(String s : fsm.getSchemes()) {
             System.out.println(s);
         }
@@ -49,17 +48,18 @@ public class SimpleSample {
         System.setProperty("jna.library.path", nf.getAbsolutePath());
         //fsm.close();
     }
-    FDLibrary.INSTANCE.test1();
 
-    FDLibrary.fd_cb fc = new FDLibrary.fd_cb() {
-        public void invoke(int x, int y, int radius) {
-            System.out.printf("from java, x=%d, y=%d, r=%d", x, y, radius);
-            System.out.println();
-        }
+    FDLibrary.fd_cb_t fc = new FDLibrary.fd_cb_t() {
+      public void invoke(int x, int y, int radius) {
+        System.out.printf("from java, x=%d, y=%d, r=%d", x, y, radius);
+        System.out.println();
+      }
     };
-    FDLibrary.INSTANCE.set_cb(fc);
 
-    FDLibrary.INSTANCE.test2(args.length, args);
+    Pointer fd = FDLibrary.INSTANCE.facedetect_create(args[0], fc);
+    FDLibrary.INSTANCE.facedetect_detect_image(fd, args[1]);
+    FDLibrary.INSTANCE.facedetect_destroy(fd);
+
     System.out.println("Leave to OpenCV");
   }
 

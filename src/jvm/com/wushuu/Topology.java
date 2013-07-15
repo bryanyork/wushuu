@@ -3,16 +3,10 @@ package com.wushuu;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
-import backtype.storm.task.ShellBolt;
-import backtype.storm.task.TopologyContext;
-import backtype.storm.topology.BasicOutputCollector;
-import backtype.storm.topology.IRichBolt;
-import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.TopologyBuilder;
-import backtype.storm.topology.base.BaseBasicBolt;
-import backtype.storm.tuple.Fields;
-import backtype.storm.tuple.Tuple;
-import backtype.storm.tuple.Values;
+
+import  com.wushuu.spout.DirSpout;
+import  com.wushuu.bolt.DetectBolt;
 
 
 public class Topology {
@@ -21,21 +15,25 @@ public class Topology {
         
         TopologyBuilder builder = new TopologyBuilder();
         
-        //builder.setSpout("spout", new RandomSentenceSpout(), 5);
+        builder.setSpout("dir-spout", new DirSpout(), 1);
+        builder.setBolt("detect-bolt", new DetectBolt(), 2).shuffleGrouping("dir-spout");
         
-
         Config conf = new Config();
         conf.setDebug(true);
 
+        System.out.println("entering main");
+
         if(args!=null && args.length > 0) {
-            conf.setNumWorkers(3);
+            System.out.println("submit topology");
+            conf.setNumWorkers(4);
             
             StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
         } else {        
+            System.out.println("local cluster");
             conf.setMaxTaskParallelism(3);
 
             LocalCluster cluster = new LocalCluster();
-            cluster.submitTopology("word-count", conf, builder.createTopology());
+            cluster.submitTopology("wushuu-detect", conf, builder.createTopology());
         
             Thread.sleep(10000);
 

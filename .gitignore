@@ -28,6 +28,10 @@ CMakeCache.txt
 CMakeFiles
 Makefile
 
+# project files
+.classpath
+.project
+
 .lein-repl-history
 
 *~
