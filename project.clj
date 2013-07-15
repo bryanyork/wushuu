@@ -10,4 +10,5 @@
                                [storm "0.8.2"]
                              ]}}
   :min-lein-version "2.2.0"
+  :plugins [[lein-idefiles "0.2.0"]]
   )
