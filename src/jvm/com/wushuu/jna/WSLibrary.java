@@ -25,7 +25,7 @@ public interface WSLibrary extends Library {
           System.out.println("no jna.library.path");
           StandardFileSystemManager fsm = (StandardFileSystemManager)VFS.getManager();
           File tmpdir = fsm.getTemporaryFileStore().allocateFile("wsnative");
-          FileObject from = fsm.resolveFile("res:native");
+          FileObject from = fsm.resolveFile("res:wushuu/.ANCHOR");
           FileObject to = fsm.toFileObject(tmpdir);
           to.copyFrom(from, Selectors.SELECT_ALL);
           System.setProperty("jna.library.path", tmpdir.getAbsolutePath());

@@ -138,7 +138,7 @@ externalproject_add_step(wushuu-native force-rebuild
 
 externalproject_add_step(wushuu-native stage
   COMMAND cmake -E cmake_echo_color --red --bold "Staging native libraries ..."
-  COMMAND cmake -E copy_if_different <INSTALL_DIR>/lib/libwsnative.so res/native/libwsnative.so
+  COMMAND cmake -E copy_if_different <INSTALL_DIR>/lib/libwsnative.so res/wushuu/native/libwsnative.so
   DEPENDEES install)
 
 add_custom_target(jvm
