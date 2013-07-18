@@ -6,6 +6,18 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
+wushuu::FaceDetect* facedetect_create(const char* cascadeXml, fd_cb_t fd_cb) {
+  return new wushuu::FaceDetect(cascadeXml, fd_cb);
+}
+
+void facedetect_destroy(wushuu::FaceDetect* fd) {
+  delete fd;
+}
+
+void facedetect_detect_image(wushuu::FaceDetect* fd, const char* imgFile) {
+  fd->detectImage(imgFile);
+}
+
 namespace wushuu {
 
 FaceDetect::FaceDetect(const char* cascadeXml, fd_cb_t fd_cb, double scale):fd_cb_(fd_cb), scale_(scale) {

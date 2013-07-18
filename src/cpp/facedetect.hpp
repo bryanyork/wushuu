@@ -23,17 +23,9 @@ namespace wushuu {
 
 extern "C" {
 
-wushuu::FaceDetect* facedetect_create(const char* cascadeXml, fd_cb_t fd_cb) {
-  return new wushuu::FaceDetect(cascadeXml, fd_cb);
-}
-
-void facedetect_destroy(wushuu::FaceDetect* fd) {
-  delete fd;
-}
-
-void facedetect_detect_image(wushuu::FaceDetect* fd, const char* imgFile) {
-  fd->detectImage(imgFile);
-}
+wushuu::FaceDetect* facedetect_create(const char* cascadeXml, fd_cb_t fd_cb);
+void facedetect_destroy(wushuu::FaceDetect* fd);
+void facedetect_detect_image(wushuu::FaceDetect* fd, const char* imgFile);
 
 }
 

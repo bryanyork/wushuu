@@ -2,7 +2,7 @@
 #define WUSHUU_BGFG_CODEBOOK_HPP
 
 
-typedef void (*bgfg_cb_t)(int x, int y, int radius);
+typedef void (*bgfg_cb_t)(int x, int y, int w, int h);
 
 namespace wushuu {
 
@@ -17,5 +17,12 @@ namespace wushuu {
   };
 }
 
+extern "C" {
+
+wushuu::BgFgCodeBook* bgfgcb_create(bgfg_cb_t bgfg_cb);
+void bgfgcb_destroy(wushuu::BgFgCodeBook* bf);
+void bgfgcb_detect_video(wushuu::BgFgCodeBook* bf, const char* videoFile);
+
+}
 
 #endif

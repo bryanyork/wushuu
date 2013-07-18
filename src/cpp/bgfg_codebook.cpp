@@ -3,6 +3,20 @@
 #include "opencv2/highgui/highgui_c.h"
 #include "opencv2/legacy/legacy.hpp"
 
+bool ProcessFrame(IplImage * detection, IplImage * image, float m_GSD = 20, bgfg_cb_t bgfg_cb = 0);
+
+wushuu::BgFgCodeBook* bgfgcb_create(bgfg_cb_t bgfg_cb) {
+  return new wushuu::BgFgCodeBook(bgfg_cb);
+}
+
+void bgfgcb_destroy(wushuu::BgFgCodeBook* bf) {
+  delete bf;
+}
+
+void bgfgcb_detect_video(wushuu::BgFgCodeBook* bf, const char* videoFile) {
+  bf->detectVideo(videoFile);
+}
+
 namespace wushuu {
 
   BgFgCodeBook::BgFgCodeBook(bgfg_cb_t bgfg_cb):bgfg_cb_(bgfg_cb) {
@@ -46,6 +60,7 @@ namespace wushuu {
           cvBGCodeBookClearStale( model, model->t/2 );
 
         cvBGCodeBookDiff( model, yuvImage, imaskCodeBook );
+        ProcessFrame(imaskCodeBook, rawImage, 20, bgfg_cb_);
       }
     }
 

@@ -1,3 +1,5 @@
+#include "bgfg_codebook.hpp"
+
 #include "opencv2/legacy/legacy.hpp"
 
 #include <algorithm>
@@ -10,7 +12,7 @@ Output: A list of targets
 
 #define MAXBLOBCNT 200
 
-bool ProcessFrame(IplImage * detection, IplImage * image, float m_GSD = 20)
+bool ProcessFrame(IplImage * detection, IplImage * image, float m_GSD = 20, bgfg_cb_t bgfg_cb = 0)
 {
     //too few or too much detection?
     float mask_area = image->width*image->height;
@@ -81,6 +83,10 @@ bool ProcessFrame(IplImage * detection, IplImage * image, float m_GSD = 20)
     for (int j = 0; j< nBlobNum; j++)
     {
     //get the attributes of each blob here
+        if(bgfg_cb) {
+            const CvRect& r = rectBlob[nBlobNum];
+            bgfg_cb(r.x, r.y, r.width, r.height);
+        }
     }
 
     cvReleaseMemStorage( &storage); 

@@ -1,5 +1,7 @@
 package com.wushuu;
 
+import com.wushuu.jna.WSLibrary;
+
 import java.io.File;
 
 import com.sun.jna.Library;
@@ -16,22 +18,10 @@ import org.apache.commons.vfs2.impl.StandardFileSystemManager;
 
 public class SimpleSample {
 
-  public interface FDLibrary extends Library {
-    FDLibrary INSTANCE = (FDLibrary) Native.loadLibrary("wsfd", FDLibrary.class);
-
-    interface fd_cb_t extends Callback {
-        void invoke(int x, int y, int radius);
-    }
-
-    Pointer facedetect_create(String cascadeXml, fd_cb_t fd_cb);
-    void facedetect_destroy(Pointer fd);
-    void facedetect_detect_image(Pointer fd, String imgFile);
-  }
 
   public static void main(String[] args) throws Exception {
     System.out.println("Enter to OpenCV");
     System.out.println(args.length);
-    System.out.println(args[0]);
     System.out.println(System.getProperty("java.library.path"));
     System.out.println(System.getProperty("jna.library.path"));
 
@@ -49,16 +39,16 @@ public class SimpleSample {
         //fsm.close();
     }
 
-    FDLibrary.fd_cb_t fc = new FDLibrary.fd_cb_t() {
-      public void invoke(int x, int y, int radius) {
-        System.out.printf("from java, x=%d, y=%d, r=%d", x, y, radius);
+    WSLibrary.bgfg_cb_t bfcb = new WSLibrary.bgfg_cb_t() {
+      public void invoke(int x, int y, int w, int h) {
+        System.out.printf("from java, x=%d, y=%d, w=%d, h=%d", x, y, w, h);
         System.out.println();
       }
     };
 
-    Pointer fd = FDLibrary.INSTANCE.facedetect_create(args[0], fc);
-    FDLibrary.INSTANCE.facedetect_detect_image(fd, args[1]);
-    FDLibrary.INSTANCE.facedetect_destroy(fd);
+    Pointer fd = WSLibrary.INSTANCE.bgfgcb_create(bfcb);
+    WSLibrary.INSTANCE.bgfgcb_detect_video(fd, "tcp://192.168.2.168:9999");
+    WSLibrary.INSTANCE.bgfgcb_destroy(fd);
 
     System.out.println("Leave to OpenCV");
   }
