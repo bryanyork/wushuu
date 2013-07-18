@@ -19,7 +19,7 @@ link_directories(${X264_LIBRARY_DIRS} ${FFMPEG_LIBRARY_DIRS} ${OpenCV_LIB_DIR} $
 set(OPENCV_LIBS opencv_core opencv_imgproc opencv_objdetect opencv_highgui)
 set(FFMPEG_LIBS avformat avcodec avutil)
 
-add_library(wsfd SHARED facedetect.cpp)
+add_library(wsfd SHARED facedetect.cpp bgfg_codebook.cpp blobanalyzer.cpp)
 target_link_libraries(wsfd ${OpenCV_LIBS} ${FFMPEG_LIBRARIES} ${X264_LIBRARIES} ${Boost_LIBRARIES})
 set_target_properties(wsfd PROPERTIES
   VERSION 1.0

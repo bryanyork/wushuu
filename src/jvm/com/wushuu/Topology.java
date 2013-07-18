@@ -35,9 +35,9 @@ public class Topology {
             LocalCluster cluster = new LocalCluster();
             cluster.submitTopology("wushuu-detect", conf, builder.createTopology());
         
-            Thread.sleep(10000);
-
-            cluster.shutdown();
+            while(true) {
+                Thread.sleep(1000);
+            }
         }
     }
 }
