@@ -25,19 +25,6 @@ public class SimpleSample {
     System.out.println(System.getProperty("java.library.path"));
     System.out.println(System.getProperty("jna.library.path"));
 
-    if(null == System.getProperty("jna.library.path")) {
-        StandardFileSystemManager fsm = (StandardFileSystemManager)VFS.getManager();
-        File nf = fsm.getTemporaryFileStore().allocateFile("wsnatives");
-        for(String s : fsm.getSchemes()) {
-            System.out.println(s);
-        }
-        FileObject jar = fsm.resolveFile("res:native/wsnatives.jar");
-        FileObject from = fsm.createFileSystem(jar);
-        FileObject to = fsm.toFileObject(nf);
-        to.copyFrom(from, Selectors.SELECT_ALL);
-        System.setProperty("jna.library.path", nf.getAbsolutePath());
-        //fsm.close();
-    }
 
     WSLibrary.bgfg_cb_t bfcb = new WSLibrary.bgfg_cb_t() {
       public void invoke(int x, int y, int w, int h) {
@@ -47,7 +34,7 @@ public class SimpleSample {
     };
 
     Pointer fd = WSLibrary.INSTANCE.bgfgcb_create(bfcb);
-    WSLibrary.INSTANCE.bgfgcb_detect_video(fd, "tcp://192.168.2.168:9999");
+    WSLibrary.INSTANCE.bgfgcb_detect_video(fd, "tcp://127.0.0.1:9876");
     WSLibrary.INSTANCE.bgfgcb_destroy(fd);
 
     System.out.println("Leave to OpenCV");

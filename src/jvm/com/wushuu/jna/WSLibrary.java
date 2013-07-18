@@ -1,12 +1,47 @@
 package com.wushuu.jna;
 
+import java.io.File;
+
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 
+import org.apache.commons.vfs2.VFS;
+import org.apache.commons.vfs2.FileSystemManager;
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.Selectors;
+import org.apache.commons.vfs2.provider.temp.TemporaryFileProvider;
+import org.apache.commons.vfs2.impl.StandardFileSystemManager;
+import org.apache.commons.vfs2.FileSystemException;
+
 public interface WSLibrary extends Library {
-  WSLibrary INSTANCE = (WSLibrary)Native.loadLibrary("wsnative", WSLibrary.class);
+
+  class Loader {
+    static WSLibrary loadNativeLibrary() {
+      try {
+        System.out.println("in load library");
+        if(null == System.getProperty("jna.library.path")) {
+          System.out.println("no jna.library.path");
+          StandardFileSystemManager fsm = (StandardFileSystemManager)VFS.getManager();
+          File tmpdir = fsm.getTemporaryFileStore().allocateFile("wsnative");
+          FileObject from = fsm.resolveFile("res:native");
+          FileObject to = fsm.toFileObject(tmpdir);
+          to.copyFrom(from, Selectors.SELECT_ALL);
+          System.setProperty("jna.library.path", tmpdir.getAbsolutePath());
+	  System.out.println("*****************");
+	  System.out.println(System.getProperty("jna.library.path"));
+	  System.out.println("*****************");
+	}
+
+        return (WSLibrary)Native.loadLibrary("wsnative", WSLibrary.class);
+      } catch (FileSystemException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
+  WSLibrary INSTANCE = Loader.loadNativeLibrary();
 
   interface fd_cb_t extends Callback {
       void invoke(int x, int y, int radius);
