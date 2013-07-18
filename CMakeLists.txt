@@ -136,16 +136,9 @@ externalproject_add_step(wushuu-native force-rebuild
   DEPENDERS download
   ALWAYS 1)
 
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-  set(JNA_ARCH x86-64)
-else()
-  set(JNA_ARCH x86)
-endif()
-string(TOLOWER ${CMAKE_SYSTEM_NAME} JNA_OS)
-
 externalproject_add_step(wushuu-native stage
   COMMAND cmake -E cmake_echo_color --red --bold "Staging native libraries ..."
-  COMMAND cmake -E copy_if_different <INSTALL_DIR>/lib/libwsnative.so res/native/${JNA_OS}-${JNA_ARCH}/libwsnative.so
+  COMMAND cmake -E copy_if_different <INSTALL_DIR>/lib/libwsnative.so res/native/libwsnative.so
   DEPENDEES install)
 
 add_custom_target(jvm
