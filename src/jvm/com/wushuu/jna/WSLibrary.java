@@ -6,7 +6,7 @@ import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 
 public interface WSLibrary extends Library {
-  WSLibrary INSTANCE = (WSLibrary)Native.loadLibrary("wsfd", WSLibrary.class);
+  WSLibrary INSTANCE = (WSLibrary)Native.loadLibrary("wsnative", WSLibrary.class);
 
   interface fd_cb_t extends Callback {
       void invoke(int x, int y, int radius);

@@ -19,9 +19,9 @@ link_directories(${X264_LIBRARY_DIRS} ${FFMPEG_LIBRARY_DIRS} ${OpenCV_LIB_DIR} $
 set(OPENCV_LIBS opencv_core opencv_imgproc opencv_objdetect opencv_highgui)
 set(FFMPEG_LIBS avformat avcodec avutil)
 
-add_library(wsfd SHARED facedetect.cpp bgfg_codebook.cpp blobanalyzer.cpp)
-target_link_libraries(wsfd ${OpenCV_LIBS} ${FFMPEG_LIBRARIES} ${X264_LIBRARIES} ${Boost_LIBRARIES})
-set_target_properties(wsfd PROPERTIES
+add_library(wsnative SHARED facedetect.cpp bgfg_codebook.cpp blobanalyzer.cpp)
+target_link_libraries(wsnative ${OpenCV_LIBS} ${FFMPEG_LIBRARIES} ${X264_LIBRARIES} ${Boost_LIBRARIES})
+set_target_properties(wsnative PROPERTIES
   VERSION 1.0
   SOVERSION 1
   LINK_FLAGS "-Wl,--as-needed -Wl,-Bsymbolic"
@@ -34,6 +34,6 @@ set_target_properties(fd PROPERTIES
   INSTALL_RPATH "\$ORIGIN/../lib")
 
 
-install(TARGETS wsfd fd
+install(TARGETS wsnative fd
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib)
