@@ -1,5 +1,7 @@
 (defproject wushuu "0.0.1-SNAPSHOT"
-  :java-source-paths ["src/jvm"]
+  :source-paths ["src/clj"]
+  :java-source-paths ["src/java"]
+  :javac-options ["-target" "1.7" "-source" "1.7"]
   :resource-paths ["res"]
   :aot :all
   :dependencies [

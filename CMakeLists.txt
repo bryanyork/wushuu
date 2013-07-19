@@ -128,7 +128,7 @@ externalproject_add(boost
 
 externalproject_add(wushuu-native
   DEPENDS pkg-config ffmpeg opencv boost
-  URL src/cpp
+  URL src/main/cpp
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D WS_PREFIX=${WS_PREFIX})
 
