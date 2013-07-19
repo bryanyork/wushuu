@@ -3,6 +3,8 @@ package com.wushuu.bolt;
 import com.wushuu.jna.WSLibrary;
 
 import java.util.Map;
+import java.io.InputStreamReader;
+import java.io.IOException;
 
 import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.topology.BasicOutputCollector;
@@ -25,10 +27,14 @@ public class DetectBolt extends BaseBasicBolt {
         System.out.println();
       }
     };
-    String xml = CharStreams.toString(new InputStreamReader(
+    try {
+      String xml = CharStreams.toString(new InputStreamReader(
                                 ClassLoader.getSystemResourceAsStream("wushuu/data/lbpcascades/lbpcascade_frontalface.xml")));
+      p = WSLibrary.INSTANCE.facedetect_create(xml, fc);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
 
-    p = WSLibrary.INSTANCE.facedetect_create(xml, fc);
   }
 
   @Override

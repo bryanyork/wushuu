@@ -16,7 +16,7 @@ import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 
-import org.apache.commons.io.FilenameUtils;
+import static com.google.common.io.Files.getFileExtension;
 
 public class DirSpout extends  BaseRichSpout {
   private Object event = null;
@@ -38,7 +38,7 @@ public class DirSpout extends  BaseRichSpout {
                 }
               } catch(InterruptedException e) {}
               String p = file.toFile().getCanonicalPath();
-              if(0 == FilenameUtils.getExtension(p).compareToIgnoreCase("jpg")) {
+              if(0 == getFileExtension(p).compareToIgnoreCase("jpg")) {
                 coll.emit(new Values(file.toFile().getCanonicalPath()));
               }
               return FileVisitResult.CONTINUE;

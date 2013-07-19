@@ -10,13 +10,6 @@ import com.sun.jna.Native;
 import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 
-import org.apache.commons.vfs2.VFS;
-import org.apache.commons.vfs2.FileSystemManager;
-import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.Selectors;
-import org.apache.commons.vfs2.provider.temp.TemporaryFileProvider;
-import org.apache.commons.vfs2.impl.StandardFileSystemManager;
-
 import com.google.common.io.CharStreams;
 
 public class SimpleSample {
