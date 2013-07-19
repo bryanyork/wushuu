@@ -1,7 +1,6 @@
 (defproject wushuu "0.0.1-SNAPSHOT"
   :java-source-paths ["src/jvm"]
   :resource-paths ["res"]
-  :jvm-opts ["-Djna.library.path=res/native"]
   :aot :all
   :dependencies [
                   [net.java.dev.jna/jna "4.0.0"]

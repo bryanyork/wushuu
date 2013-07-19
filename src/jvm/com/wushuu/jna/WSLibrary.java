@@ -21,7 +21,7 @@ public interface WSLibrary extends Library {
     static WSLibrary loadNativeLibrary() {
       try {
         System.out.println("in load library");
-        if(null == System.getProperty("jna.library.path")) {
+        if("bbb" == System.getProperty("jna.library.path")) {
           System.out.println("no jna.library.path");
           StandardFileSystemManager fsm = (StandardFileSystemManager)VFS.getManager();
           File tmpdir = fsm.getTemporaryFileStore().allocateFile("wsnative");
@@ -29,10 +29,10 @@ public interface WSLibrary extends Library {
           FileObject to = fsm.toFileObject(tmpdir);
           to.copyFrom(from, Selectors.SELECT_ALL);
           System.setProperty("jna.library.path", tmpdir.getAbsolutePath());
-	  System.out.println("*****************");
-	  System.out.println(System.getProperty("jna.library.path"));
-	  System.out.println("*****************");
-	}
+          System.out.println("*****************");
+          System.out.println(System.getProperty("jna.library.path"));
+          System.out.println("*****************");
+        }
 
         return (WSLibrary)Native.loadLibrary("wsnative", WSLibrary.class);
       } catch (FileSystemException e) {
