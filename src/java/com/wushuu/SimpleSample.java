@@ -18,8 +18,6 @@ public class SimpleSample {
   public static void main(String[] args) throws Exception {
     System.out.println("Enter to OpenCV");
     System.out.println(args.length);
-    System.out.println(System.getProperty("java.library.path"));
-    System.out.println(System.getProperty("jna.library.path"));
 
     if(false) {
       WSLibrary.bgfg_cb_t bfcb = new WSLibrary.bgfg_cb_t() {

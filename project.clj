@@ -2,7 +2,7 @@
   :source-paths ["src/clojure"]
   :java-source-paths ["src/java" "test/java"]
   :javac-options ["-target" "1.7" "-source" "1.7"]
-  :resource-paths ["src/main/resource"]
+  :resource-paths ["src/resource"]
   :junit ["test/java"]
   :aot :all
   :dependencies [
