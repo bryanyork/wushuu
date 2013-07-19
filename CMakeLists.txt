@@ -28,7 +28,7 @@ if(UNIX)
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
                                              --with-internal-glib)
 
-  ws_ep_src_url(X264 last_x264.tar.gz ftp://ftp.videolan.org/pub/x264/snapshots/last_x264.tar.bz2)
+  ws_ep_src_url(X264 last_x264.tar.bz2 ftp://ftp.videolan.org/pub/x264/snapshots/last_x264.tar.bz2)
   externalproject_add(x264
     URL ${WS_X264_URL}
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
@@ -63,6 +63,7 @@ externalproject_add(opencv
   DEPENDS pkg-config ffmpeg
   URL ${WS_OPENCV_URL}
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
+             -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
              -D CMAKE_SKIP_RPATH=ON
              -D CMAKE_POSITION_INDEPENDENT_CODE=ON
              -D CMAKE_EXE_LINKER_FLAGS=-Wl,--as-needed

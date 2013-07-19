@@ -3,6 +3,7 @@
   :resource-paths ["res"]
   :aot :all
   :dependencies [
+                  [com.google.guava/guava "14.0.1"]
                   [net.java.dev.jna/jna "4.0.0"]
                   [mysql/mysql-connector-java "5.1.25"]
                   [commons-io/commons-io "2.4"]

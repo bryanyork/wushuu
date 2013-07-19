@@ -1,5 +1,7 @@
 package com.wushuu.bolt;
 
+import com.wushuu.jna.WSLibrary;
+
 import java.util.Map;
 
 import backtype.storm.topology.base.BaseBasicBolt;
@@ -10,7 +12,7 @@ import backtype.storm.task.TopologyContext;
 
 import com.sun.jna.Pointer;
 
-import com.wushuu.jna.WSLibrary;
+import com.google.common.io.CharStreams;
 
 public class DetectBolt extends BaseBasicBolt {
   private Pointer p = null;
@@ -23,7 +25,10 @@ public class DetectBolt extends BaseBasicBolt {
         System.out.println();
       }
     };
-    p = WSLibrary.INSTANCE.facedetect_create("/home/jamesf/work/wushuu/res/data/haarcascades/haarcascade_frontalface_default.xml", fc);
+    String xml = CharStreams.toString(new InputStreamReader(
+                                ClassLoader.getSystemResourceAsStream("wushuu/data/lbpcascades/lbpcascade_frontalface.xml")));
+
+    p = WSLibrary.INSTANCE.facedetect_create(xml, fc);
   }
 
   @Override
