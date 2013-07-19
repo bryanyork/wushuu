@@ -89,11 +89,3 @@ void FaceDetect::detect(cv::Mat& img) {
 }
 
 }
-
-
-int main( int argc, const char** argv )
-{
-  return 0;
-}
-
-

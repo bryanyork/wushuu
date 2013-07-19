@@ -137,6 +137,17 @@ externalproject_add_step(wushuu-native force-rebuild
   DEPENDERS download
   ALWAYS 1)
 
+externalproject_add(wushuu-native-test
+  DEPENDS pkg-config ffmpeg opencv boost
+  URL test/cpp
+  CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
+             -D WS_PREFIX=${WS_PREFIX})
+
+externalproject_add_step(wushuu-native-test force-rebuild
+  COMMAND cmake -E cmake_echo_color --red --bold "Forcing rebuild of wushuu-native-test ..."
+  DEPENDERS download
+  ALWAYS 1)
+
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
   set(JNA_ARCH x86-64)
 else()
@@ -147,6 +158,11 @@ string(TOLOWER ${CMAKE_SYSTEM_NAME} JNA_OS)
 externalproject_add_step(wushuu-native stage
   COMMAND cmake -E cmake_echo_color --red --bold "Staging native libraries ..."
   COMMAND cmake -E copy_if_different <INSTALL_DIR>/lib/libwsnative.so src/resource/${JNA_OS}-${JNA_ARCH}/libwsnative.so
+  DEPENDEES install)
+
+externalproject_add_step(wushuu-native-test stage
+  COMMAND cmake -E cmake_echo_color --red --bold "Staging native test libraries ..."
+  COMMAND cmake -E copy_if_different <INSTALL_DIR>/lib/libwsnativetest.so src/resource/${JNA_OS}-${JNA_ARCH}/libwsnativetest.so
   DEPENDEES install)
 
 add_custom_target(jvm

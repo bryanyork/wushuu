@@ -8,6 +8,7 @@
   :dependencies [
                   [com.google.guava/guava "14.0.1"]
                   [net.java.dev.jna/jna "4.0.0"]
+                  [org.yaml/snakeyaml "1.12"]
                   [mysql/mysql-connector-java "5.1.25"]
                 ]
   :profiles {:dev
