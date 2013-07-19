@@ -10,6 +10,7 @@ namespace wushuu {
     public:
       FaceDetect(const char* cascadeXml, fd_cb_t fd_cb, double scale = 1.0);
       void detectImage(const char* imgFile);
+      void detectVideo(const char* videoFile);
 
     private:
       void detect(cv::Mat& img);
@@ -26,6 +27,7 @@ extern "C" {
 wushuu::FaceDetect* facedetect_create(const char* cascadeXml, fd_cb_t fd_cb);
 void facedetect_destroy(wushuu::FaceDetect* fd);
 void facedetect_detect_image(wushuu::FaceDetect* fd, const char* imgFile);
+void facedetect_detect_video(wushuu::FaceDetect* fd, const char* videoFile);
 
 }
 

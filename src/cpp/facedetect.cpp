@@ -18,17 +18,31 @@ void facedetect_detect_image(wushuu::FaceDetect* fd, const char* imgFile) {
   fd->detectImage(imgFile);
 }
 
+void facedetect_detect_video(wushuu::FaceDetect* fd, const char* videoFile) {
+  fd->detectVideo(videoFile);
+}
+
 namespace wushuu {
 
 FaceDetect::FaceDetect(const char* cascadeXml, fd_cb_t fd_cb, double scale):fd_cb_(fd_cb), scale_(scale) {
-  cascade_.load(cascadeXml);
+  cv::FileStorage fs(cascadeXml, cv::FileStorage::READ|cv::FileStorage::MEMORY|cv::FileStorage::FORMAT_XML);
+  cascade_.read(fs.getFirstTopLevelNode());
 }
 
 void FaceDetect::detectImage(const char* imgFile) {
-  cv::Mat img = cv::imread(imgFile);
-  std::cout << imgFile << std::endl;
-  std::cout << img.channels() << std::endl;
+  cv::Mat img = cv::imread(imgFile, 1);
   detect(img);
+}
+
+void FaceDetect::detectVideo(const char* videoFile) {
+  CvCapture* capture = cvCreateFileCapture(videoFile);
+  cv::Mat frame;
+  while(true) {
+    frame = cvQueryFrame(capture);
+    if(frame.empty())
+      break;
+    detect(frame);
+  }
 }
 
 void FaceDetect::detect(cv::Mat& img) {
@@ -57,7 +71,6 @@ void FaceDetect::detect(cv::Mat& img) {
           |CV_HAAR_SCALE_IMAGE
           ,
           cv::Size(30, 30) );
-  t = (double)cvGetTickCount() - t;
 
   for( std::vector<cv::Rect>::const_iterator r = faces.begin(); r != faces.end(); r++, i++ )
   {
@@ -69,7 +82,6 @@ void FaceDetect::detect(cv::Mat& img) {
     center.y = cvRound((r->y + r->height*0.5)*scale_);
     radius = cvRound((r->width + r->height)*0.25*scale_);
 
-    std::cout << center.x << " " << center.y << " " << radius << std::endl;
     if(fd_cb_) {
       fd_cb_(center.x, center.y, radius);
     }
