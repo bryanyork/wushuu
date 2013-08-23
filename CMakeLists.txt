@@ -78,7 +78,7 @@ externalproject_add(opencv
              -D WITH_VFW=OFF
              -D WITH_FFMPEG=ON
              -D WITH_GSTREAMER=OFF
-             -D WITH_GTK=OFF
+             -D WITH_GTK=ON
              -D WITH_IMAGEIO=OFF
              -D WITH_IPP=OFF
              -D WITH_JASPER=ON
