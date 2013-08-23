@@ -84,7 +84,7 @@ bool ProcessFrame(IplImage * detection, IplImage * image, float m_GSD = 20, bgfg
     {
     //get the attributes of each blob here
         if(bgfg_cb) {
-            const CvRect& r = rectBlob[nBlobNum];
+            const CvRect& r = rectBlob[j];
             bgfg_cb(r.x, r.y, r.width, r.height);
         }
     }

@@ -32,7 +32,9 @@ FileStorage create_fs(const string& name, int flags) {
 
 int main(int, char** argv)
 {
-    FileStorage fs = create_fs("test.yml", FileStorage::WRITE);
+    FileStorage fs = FileStorage("test.yml", FileStorage::WRITE);
+    Mat m = imread(argv[1]);
+    fs << "jpg" << m;
     fs.release();
 
     return 0;

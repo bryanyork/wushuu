@@ -42,9 +42,7 @@ namespace wushuu {
       if(!rawImage)
         break;
 
-      if(frameSeq < frameToLearn) {
-        ++frameSeq;
-      }
+      ++frameSeq;
 
       if(1 == frameSeq) {
         yuvImage = cvCloneImage(rawImage);

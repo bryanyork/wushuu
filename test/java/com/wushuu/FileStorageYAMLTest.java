@@ -10,7 +10,16 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Callback;
 
+import org.junit.runners.JUnit4;
+import org.junit.runner.RunWith;
+import org.junit.Test;
+
+@RunWith(JUnit4.class)
 public class FileStorageYAMLTest {
+
+	@Test
+	public void thisAlwaysPasses() {
+	}
 
     public static class Matrix {
         private int rows;
@@ -58,7 +67,6 @@ public class FileStorageYAMLTest {
     public static class MatrixConstructor extends Constructor {
         protected Class<?> getClassForName(String name) throws ClassNotFoundException 
         {
-            System.out.println("***" + name);
             if ("opencv-matrix".equals(name)) {
                 return Matrix.class;
             }
