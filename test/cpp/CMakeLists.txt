@@ -26,6 +26,12 @@ set_target_properties(wsnt PROPERTIES
   LINK_FLAGS "-Wl,--as-needed"
   INSTALL_RPATH "\$ORIGIN/../lib")
 
-install(TARGETS wsnativetest wsnt
+add_executable(test_blobanalyzer test_blobanalyzer.cpp)
+target_link_libraries(test_blobanalyzer ${OpenCV_LIBS} ${FFmpeg_LIBRARIES} ${X264_LIBRARIES} wsnative)
+set_target_properties(test_blobanalyzer PROPERTIES
+  LINK_FLAGS "-Wl,--as-needed"
+  INSTALL_RPATH "\$ORIGIN/../lib")
+
+install(TARGETS wsnativetest wsnt test_blobanalyzer
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib)
