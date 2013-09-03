@@ -14,8 +14,8 @@ void facedetect_destroy(wushuu::FaceDetect* fd) {
   delete fd;
 }
 
-void facedetect_detect_image(wushuu::FaceDetect* fd, const char* imgFile) {
-  fd->detectImage(imgFile);
+void facedetect_detect_image(wushuu::FaceDetect* fd, const char* imgFile, fd_cb_t fd_cb) {
+  fd->detectImage(imgFile, fd_cb);
 }
 
 void facedetect_detect_video(wushuu::FaceDetect* fd, const char* videoFile) {
@@ -29,9 +29,9 @@ FaceDetect::FaceDetect(const char* cascadeXml, fd_cb_t fd_cb, double scale):fd_c
   cascade_.read(fs.getFirstTopLevelNode());
 }
 
-void FaceDetect::detectImage(const char* imgFile) {
+void FaceDetect::detectImage(const char* imgFile, fd_cb_t fd_cb) {
   cv::Mat img = cv::imread(imgFile, 1);
-  detect(img);
+  detect(img, fd_cb);
 }
 
 void FaceDetect::detectVideo(const char* videoFile) {
@@ -45,7 +45,7 @@ void FaceDetect::detectVideo(const char* videoFile) {
   }
 }
 
-void FaceDetect::detect(cv::Mat& img) {
+void FaceDetect::detect(cv::Mat& img, fd_cb_t fd_cb) {
   int i = 0;
   double t = 0;
   std::vector<cv::Rect> faces;
@@ -72,6 +72,7 @@ void FaceDetect::detect(cv::Mat& img) {
           ,
           cv::Size(30, 30) );
 
+  fd_cb_t cb = fd_cb ? fd_cb : fd_cb_;
   for( std::vector<cv::Rect>::const_iterator r = faces.begin(); r != faces.end(); r++, i++ )
   {
     cv::Mat smallImgROI;
@@ -82,8 +83,8 @@ void FaceDetect::detect(cv::Mat& img) {
     center.y = cvRound((r->y + r->height*0.5)*scale_);
     radius = cvRound((r->width + r->height)*0.25*scale_);
 
-    if(fd_cb_) {
-      fd_cb_(center.x, center.y, radius);
+    if(cb) {
+      cb(center.x, center.y, radius);
     }
   }
 }

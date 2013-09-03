@@ -17,7 +17,7 @@ public interface WSLibrary extends Library {
 
   Pointer facedetect_create(String cascadeXml, fd_cb_t fd_cb);
   void facedetect_destroy(Pointer fd);
-  void facedetect_detect_image(Pointer fd, String imgFile);
+  void facedetect_detect_image(Pointer fd, String imgFile, fd_cb_t fd_cb);
   void facedetect_detect_video(Pointer fd, String videoFile);
 
   interface bgfg_cb_t extends Callback {

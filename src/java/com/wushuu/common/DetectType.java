@@ -1,4 +1,4 @@
-package com.wushuu.bolt;
+package com.wushuu.common;
 
 public enum DetectType {
   FACE_DETECT,

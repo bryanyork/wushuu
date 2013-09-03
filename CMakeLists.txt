@@ -4,6 +4,7 @@ project(wushuu)
 
 include(ProcessorCount)
 ProcessorCount(PROCESSOR_COUNT)
+math(EXPR BUILD_JOBS "${PROCESSOR_COUNT} * 2")
 
 set(WS_PREFIX ${CMAKE_BINARY_DIR}/target)
 
@@ -20,7 +21,7 @@ endfunction()
 
 
 if(UNIX)
-  set(CMAKE_BUILD_TOOL "${CMAKE_BUILD_TOOL} -j ${PROCESSOR_COUNT}")
+  set(CMAKE_BUILD_TOOL "${CMAKE_BUILD_TOOL} -j${BUILD_JOBS}")
 
   ws_ep_src_url(PKG_CONFIG pkg-config-0.28.tar.gz http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz)
   externalproject_add(pkg-config
@@ -122,7 +123,7 @@ externalproject_add(boost
   URL ${WS_BOOST_URL}
   CONFIGURE_COMMAND ./bootstrap.sh --prefix=${WS_PREFIX}
                                    --with-libraries=thread
-  BUILD_COMMAND ./b2 -j ${PROCESSOR_COUNT} link=static cxxflags=-fPIC
+  BUILD_COMMAND ./b2 -j ${BUILD_JOBS} link=static cxxflags=-fPIC
   INSTALL_COMMAND ./b2 install link=static
   BUILD_IN_SOURCE 1)
 

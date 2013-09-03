@@ -7,6 +7,7 @@ import backtype.storm.topology.TopologyBuilder;
 
 import  com.wushuu.spout.DirSpout;
 import  com.wushuu.bolt.FaceDetectBolt;
+import  com.wushuu.bolt.JDBCBolt;
 
 
 public class Topology {
@@ -16,7 +17,8 @@ public class Topology {
         TopologyBuilder builder = new TopologyBuilder();
         
         builder.setSpout("dir-spout", new DirSpout(), 1);
-        builder.setBolt("detect-bolt", new FaceDetectBolt(), 2).shuffleGrouping("dir-spout");
+        builder.setBolt("fd-bolt", new FaceDetectBolt(), 2).shuffleGrouping("dir-spout");
+        builder.setBolt("jdbc-bolt", new JDBCBolt(), 1).shuffleGrouping("fd-bolt");
         
         Config conf = new Config();
         conf.setDebug(true);

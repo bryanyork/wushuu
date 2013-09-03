@@ -10,6 +10,7 @@
                   [net.java.dev.jna/jna "4.0.0"]
                   [org.yaml/snakeyaml "1.12"]
                   [mysql/mysql-connector-java "5.1.25"]
+                  [org.jdbi/jdbi "2.49"]
                 ]
   :profiles {:dev
               {:dependencies [ 

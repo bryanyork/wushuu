@@ -1,4 +1,4 @@
-package com.wushuu.bolt;
+package com.wushuu.spout;
 
 import com.wushuu.jna.WSLibrary;
 
