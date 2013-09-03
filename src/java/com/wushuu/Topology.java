@@ -6,6 +6,8 @@ import backtype.storm.StormSubmitter;
 import backtype.storm.topology.TopologyBuilder;
 
 import  com.wushuu.spout.DirSpout;
+import  com.wushuu.spout.FaceDetectSpout;
+import  com.wushuu.spout.BgFgSpout;
 import  com.wushuu.bolt.FaceDetectBolt;
 import  com.wushuu.bolt.JDBCBolt;
 
@@ -15,10 +17,20 @@ public class Topology {
     public static void main(String[] args) throws Exception {
         
         TopologyBuilder builder = new TopologyBuilder();
-        
-        builder.setSpout("dir-spout", new DirSpout(), 1);
-        builder.setBolt("fd-bolt", new FaceDetectBolt(), 2).shuffleGrouping("dir-spout");
-        builder.setBolt("jdbc-bolt", new JDBCBolt(), 1).shuffleGrouping("fd-bolt");
+        int dt = 2;
+        if(0 == dt) {
+          builder.setSpout("dir-spout", new DirSpout(), 1);
+          builder.setBolt("fd-bolt", new FaceDetectBolt(), 2).shuffleGrouping("dir-spout");
+          builder.setBolt("jdbc-bolt", new JDBCBolt(), 1).shuffleGrouping("fd-bolt");
+        } else if(1 == dt) {
+          builder.setSpout("fd-spout", new FaceDetectSpout(), 2);
+          builder.setBolt("jdbc-bolt", new JDBCBolt(), 1).shuffleGrouping("fd-spout");
+        } else if(2 == dt) {
+          builder.setSpout("bgfg-spout", new BgFgSpout(), 2);
+          builder.setBolt("jdbc-bolt", new JDBCBolt(), 1).shuffleGrouping("bgfg-spout");
+        } else {
+          throw new UnsupportedOperationException(); 
+        }
         
         Config conf = new Config();
         conf.setDebug(true);

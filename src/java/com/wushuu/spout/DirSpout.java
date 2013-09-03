@@ -23,7 +23,7 @@ public class DirSpout extends  BaseRichSpout {
 
   @Override
   public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
-    event = new Object();
+    this.event = new Object();
     final SpoutOutputCollector coll= collector;
     new Thread(new Runnable() {
       public void run () {
