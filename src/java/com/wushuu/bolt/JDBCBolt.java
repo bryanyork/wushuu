@@ -17,7 +17,7 @@ public class JDBCBolt extends BaseBasicBolt {
   @Override
   public void prepare(Map stormConf, TopologyContext context) {
     try {
-      mysql = DriverManager.getConnection("jdbc:mysql://192.168.2.181/ranyang?autoReconnect=true", "root", "woyoadmin");
+      mysql = DriverManager.getConnection("jdbc:mysql://192.168.2.181/wushuu_demo?autoReconnect=true", "root", "woyoadmin");
     } catch (SQLException e) {
     }
   }

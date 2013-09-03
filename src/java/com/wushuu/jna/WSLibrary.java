@@ -26,6 +26,6 @@ public interface WSLibrary extends Library {
 
   Pointer bgfgcb_create(bgfg_cb_t bgfg_cb);
   void bgfgcb_destroy(Pointer fd);
-  void bgfgcb_detect_video(Pointer fd, String videoFile);
+  void bgfgcb_detect_video(Pointer bgfg, String videoFile);
 }
 

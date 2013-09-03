@@ -42,6 +42,14 @@ int main(int argc, char* argv[]) {
         break;
 
       ++frameSeq;
+      std::cout << frameSeq << std::endl;
+
+      char fnStr[32];
+      snprintf(fnStr, sizeof(fnStr), "images/%08ld.jpg", frameSeq);
+      cv::Mat mImg = rawImage;
+
+      char fmStr[64];
+      blobs.clear();
 
       if(1 == frameSeq) {
         yuvImage = cvCloneImage(rawImage);
@@ -52,30 +60,29 @@ int main(int argc, char* argv[]) {
       cvCvtColor( rawImage, yuvImage, CV_BGR2YCrCb );//YUV For codebook method
       if(frameSeq < frameToLearn) {  // learning
         cvBGCodeBookUpdate(model, yuvImage);
+
+        snprintf(fmStr, sizeof(fmStr), "%ld : %d", frameSeq, blobs.size());
+        cv::putText(mImg, fmStr, cv::Point(10, 40), cv::FONT_HERSHEY_SIMPLEX, 1, CV_RGB(255, 0, 0));
+
+        cv::Mat mImg = rawImage;
+        cv::imwrite(fnStr, mImg);
       } else {
         if(frameSeq == frameToLearn)
           cvBGCodeBookClearStale( model, model->t/2 );
 
         cvBGCodeBookDiff( model, yuvImage, imaskCodeBook );
 
-        std::cout << frameSeq << std::endl;
-        cv::Mat mImg = rawImage;
-
-        blobs.clear();
         ProcessFrame(imaskCodeBook, rawImage, 20, blob_collector);
         for(std::vector<CvRect>::const_iterator cr = blobs.begin(); cr != blobs.end(); ++cr) {
             std::cout << cr->x << ", " << cr->y << ", " << cr->width << ", " << cr->height << std::endl;
             cv::rectangle(mImg, *cr, CV_RGB(0,255,255));
         }
 
-        char fmStr[64];
         snprintf(fmStr, sizeof(fmStr), "%ld : %d", frameSeq, blobs.size());
         cv::putText(mImg, fmStr, cv::Point(10, 40), cv::FONT_HERSHEY_SIMPLEX, 1, CV_RGB(255, 0, 0));
 
         //cv::imshow("result", mImg);
         //cv::waitKey(0);
-        char fnStr[32];
-        snprintf(fnStr, sizeof(fnStr), "images/%08ld.jpg", frameSeq);
         cv::imwrite(fnStr, mImg);
       }
     }
