@@ -19,7 +19,6 @@ function(ws_ep_src_url NAME LOCAL REMOTE)
   endif()
 endfunction()
 
-
 if(UNIX)
   set(CMAKE_BUILD_TOOL "${CMAKE_BUILD_TOOL} -j${BUILD_JOBS}")
 
@@ -57,17 +56,17 @@ if(UNIX)
                                              --extra-cflags=-I${WS_PREFIX}/include
                                              --extra-cflags=-fvisibility=hidden
                                              --extra-ldflags=-L${WS_PREFIX}/lib)
+  set(Optional_Externals "pkg-config ffmpeg")
 endif()
 
 ws_ep_src_url(OPENCV opencv-2.4.6.tar.gz http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.6/opencv-2.4.6.tar.gz)
 externalproject_add(opencv
-  DEPENDS pkg-config ffmpeg
+  DEPENDS ${Optional_Externals}
   URL ${WS_OPENCV_URL}
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
              -D CMAKE_SKIP_RPATH=ON
              -D CMAKE_POSITION_INDEPENDENT_CODE=ON
-             -D CMAKE_EXE_LINKER_FLAGS=-Wl,--as-needed
              -D BUILD_SHARED_LIBS=OFF
              -D WITH_1394=OFF
              -D WITH_AVFOUNDATION=OFF
@@ -77,26 +76,29 @@ externalproject_add(opencv
              -D WITH_NVCUVID=OFF
              -D WITH_EIGEN=OFF
              -D WITH_VFW=OFF
-             -D WITH_FFMPEG=ON
              -D WITH_GSTREAMER=OFF
              -D WITH_GTK=ON
              -D WITH_IMAGEIO=OFF
              -D WITH_IPP=OFF
+	     ### begin opencv/3rdparty ###
+             -D WITH_FFMPEG=ON
              -D WITH_JASPER=ON
              -D BUILD_JASPER=ON
              -D WITH_JPEG=ON
              -D BUILD_JPEG=ON
-             -D WITH_OPENEXR=OFF
-             -D WITH_OPENNI=OFF
              -D WITH_PNG=OFF
+             -D WITH_TIFF=OFF
+             -D WITH_OPENEXR=OFF
+             -D WITH_TBB=OFF
+	     -D BUILD_ZLIB=ON
+	     ### end opencv/3rdparty ###
+             -D WITH_OPENNI=OFF
              -D WITH_PVAPI=OFF
              -D WITH_GIGEAPI=OFF
              -D WITH_QT=OFF
              #-D WITH_WIN32UI  using default
              -D WITH_QUICKTIME=OFF
-             -D WITH_TBB=OFF
              -D WITH_CSTRIPES=OFF
-             -D WITH_TIFF=OFF
              -D WITH_UNICAP=OFF
              -D WITH_V4L=OFF
              #-D WITH_DSHOW    using default
@@ -119,18 +121,27 @@ externalproject_add(opencv
              -D BUILD_opencv_world=OFF)
 
 ws_ep_src_url(BOOST boost_1_54_0.tar.bz2 http://sourceforge.net/projects/boost/files/boost/1.54.0/boost_1_54_0.tar.bz2)
-externalproject_add(boost
-  URL ${WS_BOOST_URL}
-  CONFIGURE_COMMAND ./bootstrap.sh --prefix=${WS_PREFIX}
-                                   --with-libraries=thread
-  BUILD_COMMAND ./b2 -j ${BUILD_JOBS} link=static cxxflags=-fPIC
-  INSTALL_COMMAND ./b2 install link=static
-  BUILD_IN_SOURCE 1)
+if(UNIX)
+  externalproject_add(boost
+    URL ${WS_BOOST_URL}
+    CONFIGURE_COMMAND ./bootstrap.sh --prefix=${WS_PREFIX} --with-thread
+    BUILD_COMMAND ./b2 -j${BUILD_JOBS} link=static runtime-link=static cxxflags=-fPIC
+    INSTALL_COMMAND ./b2 install link=static runtime-link=static
+    BUILD_IN_SOURCE 1)
+elseif(WIN32)
+  externalproject_add(boost
+    URL ${WS_BOOST_URL}
+    CONFIGURE_COMMAND .\\bootstrap.bat
+    BUILD_COMMAND ./b2 -j${BUILD_JOBS} link=static runtime-link=static --prefix=${WS_PREFIX} --with-thread
+    INSTALL_COMMAND ./b2 install link=static runtime-link=static --prefix=${WS_PREFIX} --with-thread
+    BUILD_IN_SOURCE 1)
+endif()
 
 externalproject_add(wushuu-native
-  DEPENDS pkg-config ffmpeg opencv boost
+  DEPENDS ${Optional_Externals} opencv boost
   URL src/cpp
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
+             -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
              -D WS_PREFIX=${WS_PREFIX})
 
 externalproject_add_step(wushuu-native force-rebuild
@@ -139,9 +150,10 @@ externalproject_add_step(wushuu-native force-rebuild
   ALWAYS 1)
 
 externalproject_add(wushuu-native-test
-  DEPENDS pkg-config ffmpeg opencv boost
+  DEPENDS ${Optional_Externals} opencv boost
   URL test/cpp
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
+             -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
              -D WS_PREFIX=${WS_PREFIX})
 
 externalproject_add_step(wushuu-native-test force-rebuild
@@ -156,24 +168,26 @@ else()
 endif()
 string(TOLOWER ${CMAKE_SYSTEM_NAME} JNA_OS)
 
-externalproject_add_step(wushuu-native stage
-  COMMAND cmake -E cmake_echo_color --red --bold "Staging native libraries ..."
-  COMMAND cmake -E copy_if_different <INSTALL_DIR>/lib/libwsnative.so src/resource/${JNA_OS}-${JNA_ARCH}/libwsnative.so
-  DEPENDEES install)
+if(UNIX)
+  externalproject_add_step(wushuu-native stage
+    COMMAND cmake -E cmake_echo_color --red --bold "Staging native libraries ..."
+    COMMAND cmake -E copy_if_different <INSTALL_DIR>/lib/libwsnative.so src/resource/${JNA_OS}-${JNA_ARCH}/libwsnative.so
+    DEPENDEES install)
 
-externalproject_add_step(wushuu-native-test stage
-  COMMAND cmake -E cmake_echo_color --red --bold "Staging native test libraries ..."
-  COMMAND cmake -E copy_if_different <INSTALL_DIR>/lib/libwsnativetest.so src/resource/${JNA_OS}-${JNA_ARCH}/libwsnativetest.so
-  DEPENDEES install)
+  externalproject_add_step(wushuu-native-test stage
+    COMMAND cmake -E cmake_echo_color --red --bold "Staging native test libraries ..."
+    COMMAND cmake -E copy_if_different <INSTALL_DIR>/lib/libwsnativetest.so src/resource/${JNA_OS}-${JNA_ARCH}/libwsnativetest.so
+    DEPENDEES install)
 
-add_custom_target(jvm
-  COMMAND cmake -E cmake_echo_color --red --bold "Compiling Java sources ..."
-  COMMAND lein javac
-  COMMAND cmake -E cmake_echo_color --red --bold "Compiling Clojure sources ..."
-  COMMAND lein compile
-  DEPENDS wushuu-native)
+  add_custom_target(jvm
+    COMMAND cmake -E cmake_echo_color --red --bold "Compiling Java sources ..."
+    COMMAND lein javac
+    COMMAND cmake -E cmake_echo_color --red --bold "Compiling Clojure sources ..."
+    COMMAND lein compile
+    DEPENDS wushuu-native)
 
-add_custom_target(storm
-  COMMAND cmake -E cmake_echo_color --red --bold "Making storm topology ..."
-  COMMAND lein uberjar
-  DEPENDS jvm)
+  add_custom_target(storm
+    COMMAND cmake -E cmake_echo_color --red --bold "Making storm topology ..."
+    COMMAND lein uberjar
+    DEPENDS jvm)
+endif()

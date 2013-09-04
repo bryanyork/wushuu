@@ -1,4 +1,5 @@
 #include "bgfg_codebook.hpp"
+#include "wsnative_export.h"
 
 #include "opencv2/legacy/legacy.hpp"
 
@@ -12,7 +13,7 @@ Output: A list of targets
 
 #define MAXBLOBCNT 200
 
-bool ProcessFrame(IplImage * detection, IplImage * image, float m_GSD = 20, bgfg_cb_t bgfg_cb = 0)
+WSNATIVE_EXPORT bool ProcessFrame(IplImage * detection, IplImage * image, float m_GSD = 20, bgfg_cb_t bgfg_cb = 0)
 {
     //too few or too much detection?
     float mask_area = image->width*image->height;
