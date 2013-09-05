@@ -2,10 +2,6 @@ cmake_minimum_required(VERSION 2.8)
 
 project(wushuu)
 
-include(ProcessorCount)
-ProcessorCount(PROCESSOR_COUNT)
-math(EXPR BUILD_JOBS "${PROCESSOR_COUNT} * 2")
-
 set(WS_PREFIX ${CMAKE_BINARY_DIR}/target)
 
 include(ExternalProject)
@@ -20,8 +16,6 @@ function(ws_ep_src_url NAME LOCAL REMOTE)
 endfunction()
 
 if(UNIX)
-  set(CMAKE_BUILD_TOOL "${CMAKE_BUILD_TOOL} -j${BUILD_JOBS}")
-
   ws_ep_src_url(PKG_CONFIG pkg-config-0.28.tar.gz http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz)
   externalproject_add(pkg-config
     URL ${WS_PKG_CONFIG_URL}
@@ -56,7 +50,7 @@ if(UNIX)
                                              --extra-cflags=-I${WS_PREFIX}/include
                                              --extra-cflags=-fvisibility=hidden
                                              --extra-ldflags=-L${WS_PREFIX}/lib)
-  set(Optional_Externals "pkg-config ffmpeg")
+  set(Optional_Externals pkg-config x264 ffmpeg)
 endif()
 
 ws_ep_src_url(OPENCV opencv-2.4.6.tar.gz http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.6/opencv-2.4.6.tar.gz)
@@ -122,20 +116,16 @@ externalproject_add(opencv
 
 ws_ep_src_url(BOOST boost_1_54_0.tar.bz2 http://sourceforge.net/projects/boost/files/boost/1.54.0/boost_1_54_0.tar.bz2)
 if(UNIX)
-  externalproject_add(boost
-    URL ${WS_BOOST_URL}
-    CONFIGURE_COMMAND ./bootstrap.sh --prefix=${WS_PREFIX} --with-thread
-    BUILD_COMMAND ./b2 -j${BUILD_JOBS} link=static runtime-link=static cxxflags=-fPIC
-    INSTALL_COMMAND ./b2 install link=static runtime-link=static
-    BUILD_IN_SOURCE 1)
+  set(BOOST_CFG_CMD ./bootstrap.sh)
 elseif(WIN32)
-  externalproject_add(boost
-    URL ${WS_BOOST_URL}
-    CONFIGURE_COMMAND .\\bootstrap.bat
-    BUILD_COMMAND ./b2 -j${BUILD_JOBS} link=static runtime-link=static --prefix=${WS_PREFIX} --with-thread
-    INSTALL_COMMAND ./b2 install link=static runtime-link=static --prefix=${WS_PREFIX} --with-thread
-    BUILD_IN_SOURCE 1)
+  set(BOOST_CFG_CMD ./bootstrap.bat)
 endif()
+externalproject_add(boost
+  URL ${WS_BOOST_URL}
+  CONFIGURE_COMMAND ${BOOST_CFG_CMD}
+  BUILD_COMMAND ./b2 link=static runtime-link=static --prefix=${WS_PREFIX} --with-thread
+  INSTALL_COMMAND ./b2 install link=static runtime-link=static --prefix=${WS_PREFIX} --with-thread
+  BUILD_IN_SOURCE 1)
 
 externalproject_add(wushuu-native
   DEPENDS ${Optional_Externals} opencv boost
@@ -150,7 +140,7 @@ externalproject_add_step(wushuu-native force-rebuild
   ALWAYS 1)
 
 externalproject_add(wushuu-native-test
-  DEPENDS ${Optional_Externals} opencv boost
+  DEPENDS ${Optional_Externals} opencv boost wushuu-native
   URL test/cpp
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
