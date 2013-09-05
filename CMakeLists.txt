@@ -74,7 +74,7 @@ externalproject_add(opencv
              -D WITH_GTK=ON
              -D WITH_IMAGEIO=OFF
              -D WITH_IPP=OFF
-	     ### begin opencv/3rdparty ###
+             ### begin opencv/3rdparty ###
              -D WITH_FFMPEG=ON
              -D WITH_JASPER=ON
              -D BUILD_JASPER=ON
@@ -84,8 +84,8 @@ externalproject_add(opencv
              -D WITH_TIFF=OFF
              -D WITH_OPENEXR=OFF
              -D WITH_TBB=OFF
-	     -D BUILD_ZLIB=ON
-	     ### end opencv/3rdparty ###
+             -D BUILD_ZLIB=ON
+             ### end opencv/3rdparty ###
              -D WITH_OPENNI=OFF
              -D WITH_PVAPI=OFF
              -D WITH_GIGEAPI=OFF
@@ -161,12 +161,7 @@ string(TOLOWER ${CMAKE_SYSTEM_NAME} JNA_OS)
 if(UNIX)
   externalproject_add_step(wushuu-native stage
     COMMAND cmake -E cmake_echo_color --red --bold "Staging native libraries ..."
-    COMMAND cmake -E copy_if_different <INSTALL_DIR>/lib/libwsnative.so src/resource/${JNA_OS}-${JNA_ARCH}/libwsnative.so
-    DEPENDEES install)
-
-  externalproject_add_step(wushuu-native-test stage
-    COMMAND cmake -E cmake_echo_color --red --bold "Staging native test libraries ..."
-    COMMAND cmake -E copy_if_different <INSTALL_DIR>/lib/libwsnativetest.so src/resource/${JNA_OS}-${JNA_ARCH}/libwsnativetest.so
+    COMMAND cmake -E copy_if_different <INSTALL_DIR>/lib/${CMAKE_SHARED_LIBRARY_PREFIX}wsnative${CMAKE_SHARED_LIBRARY_SUFFIX} src/resource/${JNA_OS}-${JNA_ARCH}/${CMAKE_SHARED_LIBRARY_PREFIX}wsnative${CMAKE_SHARED_LIBRARY_SUFFIX}
     DEPENDEES install)
 
   add_custom_target(jvm

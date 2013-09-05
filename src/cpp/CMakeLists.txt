@@ -38,8 +38,9 @@ set_target_properties(wsnative PROPERTIES
   LINK_FLAGS "-Wl,--as-needed -Wl,-Bsymbolic"
   INSTALL_RPATH "\$ORIGIN")
 
-install(TARGETS wsnative
+install(TARGETS wsnative EXPORT wsnative
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)
+install(EXPORT wsnative DESTINATION lib)
 
