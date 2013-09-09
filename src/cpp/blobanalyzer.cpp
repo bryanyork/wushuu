@@ -19,7 +19,7 @@ WSNATIVE_EXPORT bool ProcessFrame(IplImage * detection, IplImage * image, float 
     float mask_area = image->width*image->height;
     int width = image->width, height = image->width;
     float det_area = cvCountNonZero(detection);
-    if (det_area < mask_area*0.001 || det_area > mask_area*0.5 )
+    if (det_area < mask_area*0.00001 || det_area > mask_area*0.5 )
         return false;
     
     CvMemStorage* storage, *storage1;        
@@ -49,7 +49,7 @@ WSNATIVE_EXPORT bool ProcessFrame(IplImage * detection, IplImage * image, float 
         //TODO: make it an option
         cvDrawContours(detection,contour,CV_RGB(255,255,255),CV_RGB(255,255,255),0,CV_FILLED,8);
         
-        //get the GSD for that location
+        //get the GSD(Ground Sampling Distance) for that location
         float GSD = 20;
         /*
         if (tmpRect.height/2.0 +tmpRect.y < m_Y1 )

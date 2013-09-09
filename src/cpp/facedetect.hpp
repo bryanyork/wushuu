@@ -1,9 +1,15 @@
 #ifndef WUSHUU_FACEDETECT_HPP
 #define WUSHUU_FACEDETECT_HPP
 
+#include "wsnative_export.h"
+
 #include "opencv2/objdetect/objdetect.hpp"
 
 typedef void (*fd_cb_t)(int x, int y, int radius);
+
+namespace cv {
+  class CascadeClassifier;
+}
 
 namespace wushuu {
   class FaceDetect {
@@ -24,10 +30,10 @@ namespace wushuu {
 
 extern "C" {
 
-wushuu::FaceDetect* facedetect_create(const char* cascadeXml, fd_cb_t fd_cb);
-void facedetect_destroy(wushuu::FaceDetect* fd);
-void facedetect_detect_image(wushuu::FaceDetect* fd, const char* imgFile, fd_cb_t fd_cb);
-void facedetect_detect_video(wushuu::FaceDetect* fd, const char* videoFile);
+WSNATIVE_EXPORT wushuu::FaceDetect* facedetect_create(const char* cascadeXml, fd_cb_t fd_cb);
+WSNATIVE_EXPORT void facedetect_destroy(wushuu::FaceDetect* fd);
+WSNATIVE_EXPORT void facedetect_detect_image(wushuu::FaceDetect* fd, const char* imgFile, fd_cb_t fd_cb);
+WSNATIVE_EXPORT void facedetect_detect_video(wushuu::FaceDetect* fd, const char* videoFile);
 
 }
 

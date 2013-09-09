@@ -22,6 +22,7 @@ void blob_collector(int x, int y, int w, int h) {
 int main(int argc, char* argv[]) {
     long frameToLearn = 16;
     cvNamedWindow("result", 1);
+    cvNamedWindow("bg", 1);
 #if 1
     CvBGCodeBookModel* model = cvCreateBGCodeBookModel();
 
@@ -85,9 +86,11 @@ int main(int argc, char* argv[]) {
         snprintf(fmStr, sizeof(fmStr), "%ld : %d", frameSeq, blobs.size());
         cv::putText(mImg, fmStr, cv::Point(10, 40), cv::FONT_HERSHEY_SIMPLEX, 1, CV_RGB(255, 0, 0));
 
+        cv::Mat m = imaskCodeBook;
+        cv::imshow("bg", m);
         cv::imshow("result", mImg);
         cv::waitKey(0);
-        cv::imwrite(fnStr, mImg);
+        //cv::imwrite(fnStr, mImg);
       }
     }
     std::cout << "done" << std::endl;
