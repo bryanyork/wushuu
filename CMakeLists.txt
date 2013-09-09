@@ -41,6 +41,7 @@ if(UNIX)
                                              --enable-version3
                                              --enable-libx264
                                              --disable-devices
+                                             --enable-indev=lavfi
                                              --disable-doc
                                              --disable-shared
                                              --enable-pic
