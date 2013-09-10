@@ -14,6 +14,10 @@ import com.wushuu.common.DetectTarget;
 
 
 public class Topology {
+
+    private static String DB_CS = "jdbc:mysql://192.168.2.181/wushuu_demo?autoReconnect=true";
+    private static String DB_USER = "root";
+    private static String DB_PASS = "woyoadmin";
     
     public static void main(String[] args) throws Exception {
         
@@ -22,13 +26,13 @@ public class Topology {
         if(0 == dt) {
           builder.setSpout("dir-spout", new DirSpout(), 1);
           builder.setBolt("fd-bolt", new FaceDetectBolt(), 2).shuffleGrouping("dir-spout");
-          builder.setBolt("jdbc-bolt", new JDBCBolt(), 1).shuffleGrouping("fd-bolt");
+          builder.setBolt("jdbc-bolt", new JDBCBolt(DB_CS, DB_USER, DB_PASS), 1).shuffleGrouping("fd-bolt");
         } else if(1 == dt) {
           builder.setSpout("fd-spout", new FaceDetectSpout(), 2);
-          builder.setBolt("jdbc-bolt", new JDBCBolt(), 1).shuffleGrouping("fd-spout");
+          builder.setBolt("jdbc-bolt", new JDBCBolt(DB_CS, DB_USER, DB_PASS), 1).shuffleGrouping("fd-spout");
         } else if(2 == dt) {
-          builder.setSpout("bgfg-spout", new BgFgSpout(new DetectTarget.Bean("tmp-stream", "tcp://127.0.0.1:8899")), 2);
-          builder.setBolt("jdbc-bolt", new JDBCBolt(), 1).shuffleGrouping("bgfg-spout");
+          builder.setSpout("bgfg-spout", new BgFgSpout(new DetectTarget("tmp-stream", "tcp://127.0.0.1:8899")), 2);
+          builder.setBolt("jdbc-bolt", new JDBCBolt(DB_CS, DB_USER, DB_PASS), 1).shuffleGrouping("bgfg-spout");
         } else {
           throw new UnsupportedOperationException(); 
         }
