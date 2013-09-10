@@ -25,10 +25,7 @@ public class DetectResultTest {
 
   @Test
   public void testBgFgInsert() {
-    while(true) {
-    System.out.println("***");
     BgFgDetectResult.DAO dao = dbi.onDemand(BgFgDetectResult.DAO.class);
     dao.insert(new BgFgDetectResult("filename", 1, 2, 3, 4));
-    }
   }
 }

@@ -37,7 +37,6 @@ public class BgFgSpout extends BaseRichSpout {
             event.wait();
           }
         } catch(InterruptedException e) {}
-        System.out.printf("from java, x=%d, y=%d, w=%d, h=%d", x, y, w, h);
         coll.emit(new Values(DetectType.BGFG_DETECT, new BgFgDetectResult(detectTarget.getName(), x, y, w, h)));
       }
     };

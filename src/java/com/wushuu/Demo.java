@@ -21,7 +21,8 @@ import com.wushuu.bolt.JDBCBolt;
 import com.wushuu.common.DetectTarget;
 
 public class Demo {
-    private static String DB_CS = "jdbc:mysql://192.168.2.181/wushuu_acl?autoReconnect=true";
+    //private static String DB_CS = "jdbc:mysql://192.168.2.181/wushuu_acl?autoReconnect=true";
+    private static String DB_CS = "jdbc:mysql://192.168.2.181/wushuu_demo?autoReconnect=true";
     private static String DB_USER = "root";
     private static String DB_PASS = "woyoadmin";
     
@@ -31,7 +32,8 @@ public class Demo {
         DBI mysql = new DBI(DB_CS, DB_USER, DB_PASS);
 
         DetectTarget.DAO dao = mysql.onDemand(DetectTarget.DAO.class);
-        List<DetectTarget> dts = dao.getAllEnabled();
+        //List<DetectTarget> dts = dao.getAllEnabled();
+        List<DetectTarget> dts = new ArrayList<DetectTarget>();
         dts.add(new DetectTarget("ffserver", "rtsp://192.168.2.216"));
         for(DetectTarget dt : dts) {
           builder.setSpout(dt.getName(), new BgFgSpout(dt), 1);
