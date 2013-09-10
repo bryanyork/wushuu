@@ -2,7 +2,7 @@ package com.wushuu.common;
 
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.BindBean;
-import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
+import org.skife.jdbi.v2.sqlobject.mixins.CloseMe;
 
 import com.google.common.base.Objects;
 
@@ -35,10 +35,8 @@ public class BgFgDetectResult {
              .add("x", x).add("y", y).add("w", w).add("h", h).toString();
   }
 
-  public interface DAO extends Transactional<DAO> {
+  public interface DAO {
     @SqlUpdate("insert into tbl_security_event(file_name, top_x, top_y, bottom_x, bottom_y) values(:fileName, :x, :y, :w, :h)")
-    public void insert(@BindBean BgFgDetectResult fdr);
-
-    public void close();
+    public void insert(@BindBean BgFgDetectResult bfdr);
   }
 }

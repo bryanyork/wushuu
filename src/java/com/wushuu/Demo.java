@@ -2,6 +2,7 @@ package com.wushuu;
 
 import java.util.Map;
 import java.util.List;
+import java.util.ArrayList;
 
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
@@ -20,21 +21,24 @@ import com.wushuu.bolt.JDBCBolt;
 import com.wushuu.common.DetectTarget;
 
 public class Demo {
+    private static String DB_CS = "jdbc:mysql://192.168.2.181/wushuu_acl?autoReconnect=true";
+    private static String DB_USER = "root";
+    private static String DB_PASS = "woyoadmin";
     
     public static void main(String[] args) throws Exception { TopologyBuilder
     builder = new TopologyBuilder();
 
-        DBI mysql = new DBI("jdbc:mysql://192.168.2.181/wushuu_acl?autoReconnect=true", "root",
-        "woyoadmin");
+        DBI mysql = new DBI(DB_CS, DB_USER, DB_PASS);
 
         DetectTarget.DAO dao = mysql.onDemand(DetectTarget.DAO.class);
         List<DetectTarget> dts = dao.getAllEnabled();
+        dts.add(new DetectTarget("ffserver", "rtsp://192.168.2.216"));
         for(DetectTarget dt : dts) {
           builder.setSpout(dt.getName(), new BgFgSpout(dt), 1);
         }
 
         BoltDeclarer bd = builder.setBolt("jdbc-bolt",
-                        new JDBCBolt("jdbc:mysql://192.168.2.181/wushuu_demo?autoReconnect=true", "root", "woyoadmin"),
+                        new JDBCBolt(DB_CS, DB_USER, DB_PASS),
                         1);
         for(DetectTarget dt : dts) {
           bd.shuffleGrouping(dt.getName());

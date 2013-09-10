@@ -31,7 +31,7 @@ public class DetectTarget implements Serializable {
   }
 
   public interface DAO {
-    @SqlQuery("select name, url from tbl_detect_target where not disabled")
+    @SqlQuery("select name, detect_url as url from tbl_detect_target where not disabled")
     @MapResultAsBean
     public List<DetectTarget> getAllEnabled();
   }

@@ -28,7 +28,5 @@ public class FaceDetectResult {
   public interface DAO {
     @SqlUpdate("insert into tbl_facial_regognition(file_name, top_x, top_y, bottom_x, bottom_y) values(:fileName, :topX, :topY, :bottomX, :bottomY)")
     public void insert(@BindBean FaceDetectResult fdr);
-
-    public void close();
   }
 }
