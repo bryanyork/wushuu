@@ -10,6 +10,7 @@ import  com.wushuu.spout.FaceDetectSpout;
 import  com.wushuu.spout.BgFgSpout;
 import  com.wushuu.bolt.FaceDetectBolt;
 import  com.wushuu.bolt.JDBCBolt;
+import com.wushuu.common.DetectTarget;
 
 
 public class Topology {
@@ -26,7 +27,7 @@ public class Topology {
           builder.setSpout("fd-spout", new FaceDetectSpout(), 2);
           builder.setBolt("jdbc-bolt", new JDBCBolt(), 1).shuffleGrouping("fd-spout");
         } else if(2 == dt) {
-          builder.setSpout("bgfg-spout", new BgFgSpout(), 2);
+          builder.setSpout("bgfg-spout", new BgFgSpout(new DetectTarget.Bean("tmp-stream", "tcp://127.0.0.1:8899")), 2);
           builder.setBolt("jdbc-bolt", new JDBCBolt(), 1).shuffleGrouping("bgfg-spout");
         } else {
           throw new UnsupportedOperationException(); 

@@ -15,30 +15,55 @@ import backtype.storm.task.TopologyContext;
 
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
+import org.skife.jdbi.v2.tweak.VoidHandleCallback;
 
 public class JDBCBolt extends BaseBasicBolt {
-  DBI  mysql = null;
+  private String dbString = null;
+  private String dbUser = null;
+  private String dbPass = null;
+  private String connectionString = null;
+
+  private DBI  dbi = null;
+  private BgFgDetectResult.DAO bgfgDetectDAO = null;
+
+  public JDBCBolt(String dbString, String dbUser, String dbPass) {
+    this.dbString = dbString;
+    this.dbUser   = dbUser;
+    this.dbPass   = dbPass;
+  }
 
   @Override
   public void prepare(Map stormConf, TopologyContext context) {
-    mysql = new DBI("jdbc:mysql://192.168.2.181/wushuu_demo?autoReconnect=true", "root", "woyoadmin");
+    dbi = new DBI(dbString, dbUser, dbPass);
+    dbi.withHandle(new VoidHandleCallback() {
+      protected void execute(Handle h) {
+        h.execute("SET autocommit=1");
+      }
+    });
   }
 
   @Override
   public void execute(Tuple tup, BasicOutputCollector collector) {
     try (
-      Handle h = mysql.open();
+      Handle h = dbi.open();
     ) {
       DetectType dt = (DetectType)tup.getValueByField("detect_type");
+      System.out.printf("*****from java, %s, %s", dt, tup.getValueByField("detect_result"));
       if(DetectType.FACE_DETECT == dt) {
-        FaceDetectResult fdr = (FaceDetectResult)tup.getValueByField("detect_result");
-        h.insert("insert into tbl_facial_regognition(file_name, top_x, top_y, bottom_x, bottom_y) values(?, ?, ?, ?, ?)",
-                 fdr.file_path, fdr.x - fdr.r, fdr.y - fdr.r, fdr.x + fdr.x, fdr.y + fdr.r);
+        FaceDetectResult.DAO faceDetectDAO = dbi.onDemand(FaceDetectResult.DAO.class);
+        faceDetectDAO.insert( (FaceDetectResult)tup.getValueByField("detect_result") );
+        faceDetectDAO.close();
       } else if(DetectType.BGFG_DETECT == dt) {
-        BgFgDetectResult bfdr = (BgFgDetectResult)tup.getValueByField("detect_result");
-        h.insert("insert into tbl_security_event(file_name, top_x, top_y, bottom_x, bottom_y) values(?, ?, ?, ?, ?)",
-                 bfdr.file_path, bfdr.x, bfdr.y, bfdr.w, bfdr.h);
+        System.out.println("^^^^^^^^^^^^^^^^^");
+        BgFgDetectResult dr = (BgFgDetectResult)tup.getValueByField("detect_result");
+        System.out.println(dr);
+        BgFgDetectResult.DAO bgfgDetectDAO = dbi.open(BgFgDetectResult.DAO.class);
+        bgfgDetectDAO.insert( (BgFgDetectResult)tup.getValueByField("detect_result") );
+        bgfgDetectDAO.close();
+        dbi.close(bgfgDetectDAO);
+        System.out.println("$$$$$$$$$$$$$$$$$");
       } else {
+        throw new IllegalArgumentException();
       }
     }
   }

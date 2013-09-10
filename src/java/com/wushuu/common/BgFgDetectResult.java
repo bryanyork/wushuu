@@ -1,11 +1,17 @@
 package com.wushuu.common;
 
+import org.skife.jdbi.v2.sqlobject.SqlUpdate;
+import org.skife.jdbi.v2.sqlobject.BindBean;
+import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
+
+import com.google.common.base.Objects;
+
 public class BgFgDetectResult {
-  public String file_path;
-  public int x;
-  public int y;
-  public int w;
-  public int h;
+  private String fileName;
+  private int x;
+  private int y;
+  private int w;
+  private int h;
 
   public BgFgDetectResult(int x, int y, int w, int h) {
     this.x = x;
@@ -13,9 +19,26 @@ public class BgFgDetectResult {
     this.w = w;
     this.h = h;
   }
-
-  public BgFgDetectResult(String file_path, int x, int y, int w, int h) {
+  public BgFgDetectResult(String fileName, int x, int y, int w, int h) {
     this(x, y, w, h);
-    this.file_path = file_path;
+    this.fileName = fileName;
+  }
+
+  public String getFileName() { return fileName; }
+  public int getX() { return x; }
+  public int getY() { return y; }
+  public int getW() { return w; }
+  public int getH() { return h; }
+
+  public String toString() {
+    return Objects.toStringHelper(this).add("fileName", fileName)
+             .add("x", x).add("y", y).add("w", w).add("h", h).toString();
+  }
+
+  public interface DAO extends Transactional<DAO> {
+    @SqlUpdate("insert into tbl_security_event(file_name, top_x, top_y, bottom_x, bottom_y) values(:fileName, :x, :y, :w, :h)")
+    public void insert(@BindBean BgFgDetectResult fdr);
+
+    public void close();
   }
 }

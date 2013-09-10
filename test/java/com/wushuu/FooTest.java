@@ -9,13 +9,12 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public class FooTest {
+  @Test
+  public void thisAlwaysPasses() {
+  }
 
-	@Test
-	public void thisAlwaysPasses() {
-	}
-
-	@Test
-	@Ignore
-	public void thisIsIgnored() {
-	}
+  @Test
+  @Ignore
+  public void thisIsIgnored() {
+  }
 }

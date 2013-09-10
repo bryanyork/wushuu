@@ -3,6 +3,7 @@ package com.wushuu.spout;
 import com.wushuu.jna.WSLibrary;
 import com.wushuu.common.BgFgDetectResult;
 import com.wushuu.common.DetectType;
+import com.wushuu.common.DetectTarget;
 
 import java.util.Map;
 import java.io.InputStreamReader;
@@ -19,6 +20,11 @@ import com.sun.jna.Pointer;
 
 public class BgFgSpout extends BaseRichSpout {
   private Object event = null;
+  private DetectTarget detectTarget = null;
+
+  public BgFgSpout(DetectTarget dt) {
+    this.detectTarget = dt;
+  }
 
   @Override
   public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
@@ -32,14 +38,14 @@ public class BgFgSpout extends BaseRichSpout {
           }
         } catch(InterruptedException e) {}
         System.out.printf("from java, x=%d, y=%d, w=%d, h=%d", x, y, w, h);
-        coll.emit(new Values(DetectType.BGFG_DETECT, new BgFgDetectResult("tcp://127.0.0.1:8899", x, y, w, h)));
+        coll.emit(new Values(DetectType.BGFG_DETECT, new BgFgDetectResult(detectTarget.getName(), x, y, w, h)));
       }
     };
 
     new Thread(new Runnable() {
       public void run () {
         Pointer p = WSLibrary.INSTANCE.bgfgcb_create(bgfg);
-        WSLibrary.INSTANCE.bgfgcb_detect_video(p, "tcp://127.0.0.1:8899");
+        WSLibrary.INSTANCE.bgfgcb_detect_video(p, detectTarget.getUrl());
       }
     }).start();
   }
