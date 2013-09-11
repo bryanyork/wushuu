@@ -152,23 +152,26 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 else()
   set(JNA_ARCH x86)
 endif()
-string(TOLOWER ${CMAKE_SYSTEM_NAME} JNA_OS)
 
-if(UNIX)
-  externalproject_add_step(wushuu-native stage
-    COMMAND cmake -E cmake_echo_color --red --bold "Staging native libraries ..."
-    COMMAND cmake -E copy_if_different <INSTALL_DIR>/lib/${CMAKE_SHARED_LIBRARY_PREFIX}wsnative${CMAKE_SHARED_LIBRARY_SUFFIX} <INSTALL_DIR>/resource/${JNA_OS}-${JNA_ARCH}/${CMAKE_SHARED_LIBRARY_PREFIX}wsnative${CMAKE_SHARED_LIBRARY_SUFFIX}
-    DEPENDEES install)
-
-  add_custom_target(jvm
-    COMMAND cmake -E cmake_echo_color --red --bold "Compiling Java sources ..."
-    COMMAND lein javac
-    COMMAND cmake -E cmake_echo_color --red --bold "Compiling Clojure sources ..."
-    COMMAND lein compile
-    DEPENDS wushuu-native)
-
-  add_custom_target(storm
-    COMMAND cmake -E cmake_echo_color --red --bold "Making storm topology ..."
-    COMMAND lein uberjar
-    DEPENDS jvm)
+if(WIN32)
+  set(JNA_OS win32)  # cmake return "Windows" for ${CMAKE_SYSTEM_NAME}
+else()
+  string(TOLOWER ${CMAKE_SYSTEM_NAME} JNA_OS)
 endif()
+
+externalproject_add_step(wushuu-native stage
+  COMMAND cmake -E cmake_echo_color --red --bold "Staging native libraries ..."
+  COMMAND cmake -E copy_if_different <INSTALL_DIR>/bin/${CMAKE_SHARED_LIBRARY_PREFIX}wsnative${CMAKE_SHARED_LIBRARY_SUFFIX} <INSTALL_DIR>/resource/${JNA_OS}-${JNA_ARCH}/${CMAKE_SHARED_LIBRARY_PREFIX}wsnative${CMAKE_SHARED_LIBRARY_SUFFIX}
+  DEPENDEES install)
+
+add_custom_target(jvm
+  COMMAND cmake -E cmake_echo_color --red --bold "Compiling Java sources ..."
+  COMMAND lein javac
+  COMMAND cmake -E cmake_echo_color --red --bold "Compiling Clojure sources ..."
+  COMMAND lein compile
+  DEPENDS wushuu-native)
+
+add_custom_target(storm
+  COMMAND cmake -E cmake_echo_color --red --bold "Making storm topology ..."
+  COMMAND lein uberjar
+  DEPENDS jvm)
