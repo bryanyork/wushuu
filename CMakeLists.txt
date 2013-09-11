@@ -162,7 +162,7 @@ string(TOLOWER ${CMAKE_SYSTEM_NAME} JNA_OS)
 if(UNIX)
   externalproject_add_step(wushuu-native stage
     COMMAND cmake -E cmake_echo_color --red --bold "Staging native libraries ..."
-    COMMAND cmake -E copy_if_different <INSTALL_DIR>/lib/${CMAKE_SHARED_LIBRARY_PREFIX}wsnative${CMAKE_SHARED_LIBRARY_SUFFIX} src/resource/${JNA_OS}-${JNA_ARCH}/${CMAKE_SHARED_LIBRARY_PREFIX}wsnative${CMAKE_SHARED_LIBRARY_SUFFIX}
+    COMMAND cmake -E copy_if_different <INSTALL_DIR>/lib/${CMAKE_SHARED_LIBRARY_PREFIX}wsnative${CMAKE_SHARED_LIBRARY_SUFFIX} <INSTALL_DIR>/resource/${JNA_OS}-${JNA_ARCH}/${CMAKE_SHARED_LIBRARY_PREFIX}wsnative${CMAKE_SHARED_LIBRARY_SUFFIX}
     DEPENDEES install)
 
   add_custom_target(jvm
