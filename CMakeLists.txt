@@ -130,7 +130,7 @@ externalproject_add(boost
 
 externalproject_add(wushuu-native
   DEPENDS ${Optional_Externals} opencv boost
-  URL src/cpp
+  URL src/main/cpp
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
              -D WS_PREFIX=${WS_PREFIX})
@@ -142,7 +142,7 @@ externalproject_add_step(wushuu-native force-rebuild
 
 externalproject_add(wushuu-native-test
   DEPENDS ${Optional_Externals} opencv boost wushuu-native
-  URL test/cpp
+  URL src/test/cpp
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
              -D WS_PREFIX=${WS_PREFIX})

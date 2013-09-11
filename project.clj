@@ -1,9 +1,9 @@
 (defproject com.wushuu/wushuu "0.0.1-SNAPSHOT"
   :source-paths ["src/clojure"]
-  :java-source-paths ["src/java" "test/java"]
+  :java-source-paths ["src/main/java"]
   :javac-options ["-target" "1.7" "-source" "1.7"]
   :resource-paths ["src/resource"]
-  :junit ["test/java"]
+  :junit ["src/test/java"]
   :aot :all
   :dependencies [
                   [com.google.guava/guava "14.0.1"]
