@@ -1,8 +1,6 @@
 package com.wushuu.common;
 
 import java.util.Date;
-import java.sql.Timestamp;
-
 import com.google.common.base.Objects;
 
 abstract class AbstractDetectResult {

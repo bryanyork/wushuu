@@ -6,9 +6,6 @@ import com.wushuu.common.DetectType;
 import com.wushuu.common.DetectTarget;
 
 import java.util.Map;
-import java.io.InputStreamReader;
-import java.io.IOException;
-
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;

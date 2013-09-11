@@ -1,7 +1,5 @@
 package com.wushuu.jna;
 
-import java.io.File;
-
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Callback;

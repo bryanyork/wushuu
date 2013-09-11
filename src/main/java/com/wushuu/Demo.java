@@ -1,6 +1,5 @@
 package com.wushuu;
 
-import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -11,12 +10,8 @@ import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.topology.BoltDeclarer;
 
 import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
-
-import com.wushuu.spout.DirSpout;
 import com.wushuu.spout.FaceDetectSpout;
 import com.wushuu.spout.BgFgSpout;
-import com.wushuu.bolt.FaceDetectBolt;
 import com.wushuu.bolt.JDBCBolt;
 import com.wushuu.common.DetectTarget;
 
@@ -31,7 +26,7 @@ public class Demo {
 
         DBI mysql = new DBI(DB_CS, DB_USER, DB_PASS);
 
-        DetectTarget.DAO dao = mysql.onDemand(DetectTarget.DAO.class);
+        //DetectTarget.DAO dao = mysql.onDemand(DetectTarget.DAO.class);
         //List<DetectTarget> dts = dao.getAllEnabled();
         List<DetectTarget> dts = new ArrayList<DetectTarget>();
         dts.add(new DetectTarget("ffserver", "rtsp://192.168.2.216"));

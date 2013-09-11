@@ -15,9 +15,7 @@
 # Intermediate Directories
 target
 3rdparty
-tools/build
-tools/src
-include
+bin
 lib
 tmp
 

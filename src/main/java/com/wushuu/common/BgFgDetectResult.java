@@ -2,8 +2,6 @@ package com.wushuu.common;
 
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.BindBean;
-import org.skife.jdbi.v2.sqlobject.mixins.CloseMe;
-
 import com.google.common.base.Objects;
 
 public class BgFgDetectResult extends AbstractDetectResult {
