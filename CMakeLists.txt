@@ -3,38 +3,34 @@ cmake_minimum_required(VERSION 2.8)
 project(wushuu)
 
 set(WS_PREFIX ${CMAKE_BINARY_DIR}/target)
+set(EP_DOWNLOAD_DIR 3rdparty)
 
 include(ExternalProject)
 set_directory_properties(PROPERTIES EP_PREFIX ${WS_PREFIX})
 
-function(ws_ep_src_url NAME LOCAL REMOTE)
-  if(EXISTS ${CMAKE_SOURCE_DIR}/3rdparty/${LOCAL})
-    set(WS_${NAME}_URL ${CMAKE_SOURCE_DIR}/3rdparty/${LOCAL} PARENT_SCOPE)
-  else()
-    set(WS_${NAME}_URL ${REMOTE} PARENT_SCOPE)
-  endif()
-endfunction()
-
 if(UNIX)
-  ws_ep_src_url(PKG_CONFIG pkg-config-0.28.tar.gz http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz)
   externalproject_add(pkg-config
-    URL ${WS_PKG_CONFIG_URL}
+    URL http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz
+    URL_MD5 aa3c86e67551adc3ac865160e34a2a0d
+    DOWNLOAD_DIR ${EP_DOWNLOAD_DIR}
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
                                              --with-internal-glib)
 
-  ws_ep_src_url(X264 last_x264.tar.bz2 ftp://ftp.videolan.org/pub/x264/snapshots/last_x264.tar.bz2)
   externalproject_add(x264
-    URL ${WS_X264_URL}
+    URL ftp://ftp.videolan.org/pub/x264/snapshots/last_x264.tar.bz2
+    URL_MD5 6a36c66bd43e88c5b0aa39405a744801
+    DOWNLOAD_DIR ${EP_DOWNLOAD_DIR}
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
                                              --enable-pic
                                              --enable-static
                                              --extra-cflags=-fvisibility=hidden
                                              --disable-opencl)
 
-  ws_ep_src_url(FFMPEG ffmpeg-1.2.1.tar.bz2 http://www.ffmpeg.org/releases/ffmpeg-1.2.1.tar.bz2)
   externalproject_add(ffmpeg
     DEPENDS x264
-    URL ${WS_FFMPEG_URL}
+    URL http://www.ffmpeg.org/releases/ffmpeg-1.2.1.tar.bz2
+    URL_MD5 5071a26cc149f380908ce79ec2a677ef
+    DOWNLOAD_DIR ${EP_DOWNLOAD_DIR}
     CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
                                              --enable-gpl
                                              --enable-nonfree
@@ -54,10 +50,11 @@ if(UNIX)
   set(Optional_Externals pkg-config x264 ffmpeg)
 endif()
 
-ws_ep_src_url(OPENCV opencv-2.4.6.tar.gz http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.6/opencv-2.4.6.tar.gz)
 externalproject_add(opencv
   DEPENDS ${Optional_Externals}
-  URL ${WS_OPENCV_URL}
+  URL http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.6/opencv-2.4.6.tar.gz
+  URL_MD5 c5e8758a419b4f258611b17fc83aafaf
+  DOWNLOAD_DIR ${EP_DOWNLOAD_DIR}
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
              -D CMAKE_SKIP_RPATH=ON
@@ -115,14 +112,15 @@ externalproject_add(opencv
              -D BUILD_opencv_java=OFF
              -D BUILD_opencv_world=OFF)
 
-ws_ep_src_url(BOOST boost_1_54_0.tar.bz2 http://sourceforge.net/projects/boost/files/boost/1.54.0/boost_1_54_0.tar.bz2)
 if(UNIX)
   set(BOOST_CFG_CMD ./bootstrap.sh)
 elseif(WIN32)
   set(BOOST_CFG_CMD ./bootstrap.bat)
 endif()
 externalproject_add(boost
-  URL ${WS_BOOST_URL}
+  URL http://sourceforge.net/projects/boost/files/boost/1.54.0/boost_1_54_0.tar.bz2
+  URL_MD5 15cb8c0803064faef0c4ddf5bc5ca279
+  DOWNLOAD_DIR ${EP_DOWNLOAD_DIR}
   CONFIGURE_COMMAND ${BOOST_CFG_CMD}
   BUILD_COMMAND ./b2 link=static runtime-link=static --prefix=${WS_PREFIX} --with-thread
   INSTALL_COMMAND ./b2 install link=static runtime-link=static --prefix=${WS_PREFIX} --with-thread
