@@ -6,6 +6,7 @@ import com.wushuu.common.DetectType;
 import com.wushuu.common.DetectTarget;
 
 import java.util.Map;
+
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -16,6 +17,8 @@ import backtype.storm.tuple.Values;
 import com.sun.jna.Pointer;
 
 public class BgFgSpout extends BaseRichSpout {
+  private static final long serialVersionUID = 998693966710761901L;
+  
   private Object event = null;
   private DetectTarget detectTarget = null;
 
@@ -24,7 +27,7 @@ public class BgFgSpout extends BaseRichSpout {
   }
 
   @Override
-  public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
+  public void open(@SuppressWarnings("rawtypes") Map conf, TopologyContext context, SpoutOutputCollector collector) {
     this.event = new Object();
     final SpoutOutputCollector coll= collector;
     final WSLibrary.bgfg_cb_t bgfg = new WSLibrary.bgfg_cb_t() {

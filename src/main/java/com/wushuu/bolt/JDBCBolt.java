@@ -5,6 +5,7 @@ import com.wushuu.common.BgFgDetectResult;
 import com.wushuu.common.DetectType;
 
 import java.util.Map;
+
 import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -14,7 +15,9 @@ import backtype.storm.task.TopologyContext;
 import org.skife.jdbi.v2.DBI;
 
 public class JDBCBolt extends BaseBasicBolt {
-  private String dbString = null;
+	private static final long serialVersionUID = 3503945284591246373L;
+	
+	private String dbString = null;
   private String dbUser = null;
   private String dbPass = null;
   private DBI  dbi = null;
@@ -26,7 +29,7 @@ public class JDBCBolt extends BaseBasicBolt {
   }
 
   @Override
-  public void prepare(Map stormConf, TopologyContext context) {
+  public void prepare(@SuppressWarnings("rawtypes") Map stormConf, TopologyContext context) {
     dbi = new DBI(dbString, dbUser, dbPass);
   }
 

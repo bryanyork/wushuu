@@ -7,7 +7,9 @@ import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.helpers.MapResultAsBean;
 
 public class DetectTarget implements Serializable {
-  private String name;
+	private static final long serialVersionUID = -3096712159269021302L;
+	
+	private String name;
   private String url;
 
   public DetectTarget() {}

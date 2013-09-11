@@ -15,14 +15,15 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
-
 import static com.google.common.io.Files.getFileExtension;
 
 public class DirSpout extends  BaseRichSpout {
+  private static final long serialVersionUID = -7474157238053174534L;
+  
   private Object event = null;
 
   @Override
-  public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
+  public void open(@SuppressWarnings("rawtypes") Map conf, TopologyContext context, SpoutOutputCollector collector) {
     this.event = new Object();
     final SpoutOutputCollector coll= collector;
     new Thread(new Runnable() {

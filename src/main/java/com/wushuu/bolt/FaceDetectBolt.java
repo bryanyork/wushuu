@@ -17,15 +17,16 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 
 import com.sun.jna.Pointer;
-
 import com.google.common.io.CharStreams;
 
 
 public class FaceDetectBolt extends BaseBasicBolt {
+  private static final long serialVersionUID = -5576305838975938951L;
+	
   private Pointer p = null;
 
   @Override
-  public void prepare(Map stormConf, TopologyContext context) {
+  public void prepare(@SuppressWarnings("rawtypes") Map stormConf, TopologyContext context) {
     WSLibrary.fd_cb_t fc = new WSLibrary.fd_cb_t() {
       public void invoke(int x, int y, int radius) {
       }

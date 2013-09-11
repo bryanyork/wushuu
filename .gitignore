@@ -30,6 +30,7 @@ Makefile
 pom.xml
 .classpath
 .project
+.settings
 
 .lein-repl-history
 

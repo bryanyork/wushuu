@@ -16,14 +16,15 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 
 import com.sun.jna.Pointer;
-
 import com.google.common.io.CharStreams;
 
 public class FaceDetectSpout extends BaseRichSpout {
+  private static final long serialVersionUID = -1555439509838157295L;
+  
   private Object event = null;
 
   @Override
-  public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
+  public void open(@SuppressWarnings("rawtypes") Map conf, TopologyContext context, SpoutOutputCollector collector) {
     this.event = new Object();
     final SpoutOutputCollector coll= collector;
     final WSLibrary.fd_cb_t fc = new WSLibrary.fd_cb_t() {
