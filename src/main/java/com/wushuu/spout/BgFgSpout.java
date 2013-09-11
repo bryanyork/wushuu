@@ -6,6 +6,7 @@ import com.wushuu.common.DetectType;
 import com.wushuu.common.DetectTarget;
 
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.spout.SpoutOutputCollector;
@@ -19,7 +20,7 @@ import com.sun.jna.Pointer;
 public class BgFgSpout extends BaseRichSpout {
   private static final long serialVersionUID = 998693966710761901L;
   
-  private Object event = null;
+  private Semaphore nextFrame = null;
   private DetectTarget detectTarget = null;
 
   public BgFgSpout(DetectTarget dt) {
@@ -28,16 +29,16 @@ public class BgFgSpout extends BaseRichSpout {
 
   @Override
   public void open(@SuppressWarnings("rawtypes") Map conf, TopologyContext context, SpoutOutputCollector collector) {
-    this.event = new Object();
+    this.nextFrame = new Semaphore(0);
     final SpoutOutputCollector coll= collector;
     final WSLibrary.bgfg_cb_t bgfg = new WSLibrary.bgfg_cb_t() {
       public void invoke(int x, int y, int w, int h) {
-        try {
-          synchronized(event) {
-            event.wait();
-          }
-        } catch(InterruptedException e) {}
-        coll.emit(new Values(DetectType.BGFG_DETECT, new BgFgDetectResult(detectTarget.getName(), x, y, w, h)));
+      	try {
+					nextFrame.acquire();
+					System.out.println("emitting frame");
+					coll.emit(new Values(DetectType.BGFG_DETECT, new BgFgDetectResult(detectTarget.getName(), x, y, w, h)));
+      	} catch (InterruptedException e) {}
+        
       }
     };
 
@@ -51,9 +52,8 @@ public class BgFgSpout extends BaseRichSpout {
 
   @Override
   public void nextTuple() {
-    synchronized(event) {
-      event.notify();
-    }
+  	//System.out.println("asking for another frame");
+ 		nextFrame.release();
   }
 
   @Override

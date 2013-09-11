@@ -3,6 +3,8 @@
 #include "opencv2/highgui/highgui_c.h"
 #include "opencv2/legacy/legacy.hpp"
 
+#include "stdio.h"
+
 bool ProcessFrame(IplImage * detection, IplImage * image, float m_GSD = 20, bgfg_cb_t bgfg_cb = 0);
 
 wushuu::BgFgCodeBook* bgfgcb_create(bgfg_cb_t bgfg_cb) {
@@ -14,6 +16,9 @@ void bgfgcb_destroy(wushuu::BgFgCodeBook* bf) {
 }
 
 void bgfgcb_detect_video(wushuu::BgFgCodeBook* bf, const char* videoFile) {
+        printf("==============================\n");
+        printf("=========   ENTER  ===========\n");
+        printf("==============================\n");
   bf->detectVideo(videoFile);
 }
 
@@ -40,9 +45,17 @@ namespace wushuu {
     while(true) {
       rawImage = cvQueryFrame(capture);
       if(!rawImage)
+      {
+        printf("==============================\n");
+        printf("=========NO   FRAME===========\n");
+        printf("==============================\n");
         break;
+      }
 
       ++frameSeq;
+        printf("==============================\n");
+        printf("=========ANOTHERAME===========\n");
+        printf("==============================\n");
 
       if(1 == frameSeq) {
         yuvImage = cvCloneImage(rawImage);
