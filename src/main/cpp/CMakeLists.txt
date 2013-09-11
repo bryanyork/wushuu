@@ -11,10 +11,10 @@ if(UNIX)
 endif()
 find_package(OpenCV REQUIRED ONLY_CMAKE_FIND_ROOT_PATH)
 
-set(Boost_USE_STATIC_LIBS ON)
-set(Boost_USE_STATIC_RUNTIME ON)
-find_package(Boost 1.54 EXACT REQUIRED
-  COMPONENTS thread system)
+#set(Boost_USE_STATIC_LIBS ON)
+#set(Boost_USE_STATIC_RUNTIME ON)
+#find_package(Boost 1.54 EXACT REQUIRED
+#  COMPONENTS thread system)
 
 include_directories(BEFORE ${X264_INCLUDE_DIRS} ${FFmpeg_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS}) 
 link_directories(${X264_LIBRARY_DIRS} ${FFmpeg_LIBRARY_DIRS} ${OpenCV_LIB_DIR} ${Boost_LIBRARY_DIRS})
