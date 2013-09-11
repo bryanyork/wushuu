@@ -43,8 +43,10 @@ int main(int argc, char* argv[]) {
 
     while(true) {
       rawImage = cvQueryFrame(capture);
-      if(!rawImage)
+      if(!rawImage) {
+        std::cout << "null frame" << std::endl;
         break;
+      }
 
       ++frameSeq;
       std::cout << frameSeq << std::endl;

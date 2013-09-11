@@ -9,13 +9,6 @@ include(ExternalProject)
 set_directory_properties(PROPERTIES EP_PREFIX ${WS_PREFIX})
 
 if(UNIX)
-  externalproject_add(pkg-config
-    URL http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz
-    URL_MD5 aa3c86e67551adc3ac865160e34a2a0d
-    DOWNLOAD_DIR ${EP_DOWNLOAD_DIR}
-    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${WS_PREFIX}
-                                             --with-internal-glib)
-
   externalproject_add(x264
     URL ftp://ftp.videolan.org/pub/x264/snapshots/last_x264.tar.bz2
     URL_MD5 6a36c66bd43e88c5b0aa39405a744801
@@ -47,8 +40,11 @@ if(UNIX)
                                              --extra-cflags=-I${WS_PREFIX}/include
                                              --extra-cflags=-fvisibility=hidden
                                              --extra-ldflags=-L${WS_PREFIX}/lib)
-  set(Optional_Externals pkg-config x264 ffmpeg)
+  set(Optional_Externals x264 ffmpeg)
 endif()
+
+# help opencv tofind our ffmpeg
+set(ENV{PKG_CONFIG_PATH} ${WS_PREFIX}/lib/pkgconfig)  
 
 externalproject_add(opencv
   DEPENDS ${Optional_Externals}
@@ -57,6 +53,7 @@ externalproject_add(opencv
   DOWNLOAD_DIR ${EP_DOWNLOAD_DIR}
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+             -D CMAKE_EXE_LINKER_FLAGS=-L${WS_PREFIX}/lib # our lib path
              -D CMAKE_SKIP_RPATH=ON
              -D CMAKE_POSITION_INDEPENDENT_CODE=ON
              -D BUILD_SHARED_LIBS=OFF
