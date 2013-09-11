@@ -41,10 +41,9 @@ if(UNIX)
                                              --extra-cflags=-fvisibility=hidden
                                              --extra-ldflags=-L${WS_PREFIX}/lib)
   set(Optional_Externals x264 ffmpeg)
+  # help opencv tofind our ffmpeg
+  set(ENV{PKG_CONFIG_PATH} ${WS_PREFIX}/lib/pkgconfig)  
 endif()
-
-# help opencv tofind our ffmpeg
-set(ENV{PKG_CONFIG_PATH} ${WS_PREFIX}/lib/pkgconfig)  
 
 externalproject_add(opencv
   DEPENDS ${Optional_Externals}
@@ -53,7 +52,7 @@ externalproject_add(opencv
   DOWNLOAD_DIR ${EP_DOWNLOAD_DIR}
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-             -D CMAKE_EXE_LINKER_FLAGS=-L${WS_PREFIX}/lib # our lib path
+             -D CMAKE_EXE_LINKER_FLAGS=-L${WS_PREFIX}/lib # our libs
              -D CMAKE_SKIP_RPATH=ON
              -D CMAKE_POSITION_INDEPENDENT_CODE=ON
              -D BUILD_SHARED_LIBS=OFF
@@ -155,13 +154,15 @@ endif()
 
 if(WIN32)
   set(JNA_OS win32)  # cmake return "Windows" for ${CMAKE_SYSTEM_NAME}
+  set(JNA_DIR bin)
 else()
   string(TOLOWER ${CMAKE_SYSTEM_NAME} JNA_OS)
+  set(JNA_DIR lib)
 endif()
 
 externalproject_add_step(wushuu-native stage
   COMMAND cmake -E cmake_echo_color --red --bold "Staging native libraries ..."
-  COMMAND cmake -E copy_if_different <INSTALL_DIR>/bin/${CMAKE_SHARED_LIBRARY_PREFIX}wsnative${CMAKE_SHARED_LIBRARY_SUFFIX} <INSTALL_DIR>/resource/${JNA_OS}-${JNA_ARCH}/${CMAKE_SHARED_LIBRARY_PREFIX}wsnative${CMAKE_SHARED_LIBRARY_SUFFIX}
+  COMMAND cmake -E copy_if_different <INSTALL_DIR>/${JNA_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}wsnative${CMAKE_SHARED_LIBRARY_SUFFIX} <INSTALL_DIR>/resource/${JNA_OS}-${JNA_ARCH}/${CMAKE_SHARED_LIBRARY_PREFIX}wsnative${CMAKE_SHARED_LIBRARY_SUFFIX}
   DEPENDEES install)
 
 add_custom_target(jvm
