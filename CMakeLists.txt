@@ -43,8 +43,14 @@ if(UNIX)
   set(Optional_Externals x264 ffmpeg)
   # help opencv find our libs
   set(EP_CMAKE_CMD PKG_CONFIG_PATH=${WS_PREFIX}/lib/pkgconfig ${CMAKE_COMMAND})
+  set(EP_OCV_EXE_LINKER_FLAGS -L${WS_PREFIX}/lib)
 else()
   set(EP_CMAKE_CMD ${CMAKE_COMMAND})
+  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(EP_OCV_EXE_LINKER_FLAGS /MACHINE:X64)
+  else()
+    set(EP_OCV_EXE_LINKER_FLAGS /MACHINE:X86)
+  endif()
 endif()
 
 externalproject_add(opencv
@@ -55,7 +61,7 @@ externalproject_add(opencv
   CMAKE_COMMAND ${EP_CMAKE_CMD}
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-             -D CMAKE_EXE_LINKER_FLAGS=-L${WS_PREFIX}/lib # our libs
+	     -D CMAKE_EXE_LINKER_FLAGS=${EP_OCV_EXE_LINKER_FLAGS}
              -D CMAKE_SKIP_RPATH=ON
              -D CMAKE_POSITION_INDEPENDENT_CODE=ON
              -D BUILD_SHARED_LIBS=OFF

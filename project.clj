@@ -24,7 +24,7 @@
                                 ]
                 }
             }
-  :min-lein-version "2.2.0"
+  :min-lein-version "2.3.2"
   :plugins [
              [lein-junit "1.1.3"]
            ]
