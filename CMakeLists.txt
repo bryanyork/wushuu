@@ -41,8 +41,10 @@ if(UNIX)
                                              --extra-cflags=-fvisibility=hidden
                                              --extra-ldflags=-L${WS_PREFIX}/lib)
   set(Optional_Externals x264 ffmpeg)
-  # help opencv tofind our ffmpeg
-  set(ENV{PKG_CONFIG_PATH} ${WS_PREFIX}/lib/pkgconfig)  
+  # help opencv find our libs
+  set(EP_CMAKE_CMD PKG_CONFIG_PATH=${WS_PREFIX}/lib/pkgconfig ${CMAKE_COMMAND})
+else()
+  set(EP_CMAKE_CMD ${CMAKE_COMMAND})
 endif()
 
 externalproject_add(opencv
@@ -50,6 +52,7 @@ externalproject_add(opencv
   URL http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.6/opencv-2.4.6.tar.gz
   URL_MD5 c5e8758a419b4f258611b17fc83aafaf
   DOWNLOAD_DIR ${EP_DOWNLOAD_DIR}
+  CMAKE_COMMAND ${EP_CMAKE_CMD}
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
              -D CMAKE_EXE_LINKER_FLAGS=-L${WS_PREFIX}/lib # our libs
@@ -108,6 +111,7 @@ externalproject_add(opencv
              -D BUILD_opencv_java=OFF
              -D BUILD_opencv_world=OFF)
 
+######################################################################
 #if(UNIX)
 #  set(BOOST_CFG_CMD ./bootstrap.sh)
 #elseif(WIN32)
@@ -121,10 +125,12 @@ externalproject_add(opencv
 #  BUILD_COMMAND ./b2 link=static runtime-link=static --prefix=${WS_PREFIX} --with-thread
 #  INSTALL_COMMAND ./b2 install link=static runtime-link=static --prefix=${WS_PREFIX} --with-thread
 #  BUILD_IN_SOURCE 1)
+######################################################################
 
 externalproject_add(wushuu-native
   DEPENDS ${Optional_Externals} opencv
   URL src/main/cpp
+  CMAKE_COMMAND ${EP_CMAKE_CMD}
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
              -D WS_PREFIX=${WS_PREFIX})
@@ -137,6 +143,7 @@ externalproject_add_step(wushuu-native force-rebuild
 externalproject_add(wushuu-native-test
   DEPENDS ${Optional_Externals} opencv wushuu-native
   URL src/test/cpp
+  CMAKE_COMMAND ${EP_CMAKE_CMD}
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${WS_PREFIX}
              -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
              -D WS_PREFIX=${WS_PREFIX})

@@ -25,6 +25,7 @@ install_manifest.txt
 CMakeCache.txt
 CMakeFiles
 Makefile
+wsnative_export.h
 
 # project files
 pom.xml
